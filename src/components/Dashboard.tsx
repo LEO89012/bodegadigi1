@@ -1,0 +1,96 @@
+import { useState } from 'react';
+import { ShoppingCart, LogOut } from 'lucide-react';
+import { RegistroHoras } from './RegistroHoras';
+import { RegistroEmpleados } from './RegistroEmpleados';
+import type { Tienda, Empleado, RegistroHora } from '@/types';
+
+interface DashboardProps {
+  tienda: Tienda;
+  empleados: Empleado[];
+  registros: RegistroHora[];
+  onLogout: () => void;
+  onAddEmpleado: (cedula: string, nombre: string, area: string) => Promise<Empleado>;
+  onDeleteEmpleado: (id: number) => Promise<void>;
+  onAddRegistro: (empleado: Empleado, tipo: 'ENTRADA' | 'SALIDA') => RegistroHora;
+  onExportExcel: () => boolean;
+  findEmpleadoByCedula: (cedula: string) => Empleado | undefined;
+  getRegistrosPorEmpleado: (empleadoId: number) => RegistroHora[];
+}
+
+export function Dashboard({
+  tienda,
+  empleados,
+  registros,
+  onLogout,
+  onAddEmpleado,
+  onDeleteEmpleado,
+  onAddRegistro,
+  onExportExcel,
+  findEmpleadoByCedula,
+  getRegistrosPorEmpleado,
+}: DashboardProps) {
+  const [activeTab, setActiveTab] = useState<'horas' | 'empleados'>('horas');
+
+  return (
+    <div className="min-h-screen p-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <ShoppingCart className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-bold text-primary">
+              REGISTRO EMPLEADOS A BODEGA DIGITAL
+            </h1>
+            <ShoppingCart className="w-8 h-8 text-primary" />
+          </div>
+          <button
+            onClick={onLogout}
+            className="flex items-center gap-2 px-4 py-2 text-muted-foreground hover:text-primary transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="hidden sm:inline">{tienda.nombre}</span>
+          </button>
+        </div>
+
+        {/* Card */}
+        <div className="kiosk-card p-6">
+          {/* Tabs */}
+          <div className="flex gap-2 mb-6">
+            <button
+              type="button"
+              onClick={() => setActiveTab('horas')}
+              className={`kiosk-tab ${activeTab === 'horas' ? 'kiosk-tab-active' : 'kiosk-tab-inactive'}`}
+            >
+              Registro de Horas
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('empleados')}
+              className={`kiosk-tab ${activeTab === 'empleados' ? 'kiosk-tab-active' : 'kiosk-tab-inactive'}`}
+            >
+              Registro de Empleados
+            </button>
+          </div>
+
+          {/* Content */}
+          {activeTab === 'horas' ? (
+            <RegistroHoras
+              empleados={empleados}
+              registros={registros}
+              findEmpleadoByCedula={findEmpleadoByCedula}
+              onAddRegistro={onAddRegistro}
+              onExportExcel={onExportExcel}
+              getRegistrosPorEmpleado={getRegistrosPorEmpleado}
+            />
+          ) : (
+            <RegistroEmpleados
+              empleados={empleados}
+              onAddEmpleado={onAddEmpleado}
+              onDeleteEmpleado={onDeleteEmpleado}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
