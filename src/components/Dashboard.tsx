@@ -3,6 +3,7 @@ import { ShoppingCart, LogOut } from 'lucide-react';
 import { RegistroHoras } from './RegistroHoras';
 import { RegistroEmpleados } from './RegistroEmpleados';
 import type { Tienda, Empleado, RegistroHora } from '@/types';
+import ktronixAlkostoLogo from '@/assets/ktronix-alkosto.png';
 
 interface DashboardProps {
   tienda: Tienda;
@@ -34,26 +35,37 @@ export function Dashboard({
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <ShoppingCart className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold text-primary">
-              REGISTRO EMPLEADOS A BODEGA DIGITAL
-            </h1>
-            <ShoppingCart className="w-8 h-8 text-primary" />
-          </div>
-          <button
-            onClick={onLogout}
-            className="flex items-center gap-2 px-4 py-2 text-muted-foreground hover:text-primary transition-colors"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="hidden sm:inline">{tienda.nombre}</span>
-          </button>
-        </div>
-
         {/* Card */}
         <div className="kiosk-card p-6">
+          {/* Header */}
+          <div className="flex items-start justify-between gap-4 mb-5">
+            <div className="flex-1">
+              <div className="flex justify-center mb-3">
+                <img
+                  src={ktronixAlkostoLogo}
+                  alt="Logo Ktronix Alkosto"
+                  loading="lazy"
+                  className="h-12 w-auto object-contain"
+                />
+              </div>
+              <div className="flex items-center justify-center gap-3 text-primary">
+                <ShoppingCart className="w-6 h-6" />
+                <h1 className="text-xl sm:text-2xl font-bold text-primary text-center">
+                  REGISTRO EMPLEADOS A BODEGA DIGITAL
+                </h1>
+                <ShoppingCart className="w-6 h-6" />
+              </div>
+            </div>
+
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-primary transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="hidden sm:inline">{tienda.nombre}</span>
+            </button>
+          </div>
+
           {/* Tabs */}
           <div className="flex gap-2 mb-6">
             <button

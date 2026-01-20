@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Clock, User, FileSpreadsheet, ArrowRightCircle, ArrowLeftCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Empleado, RegistroHora } from '@/types';
+import { ObjetosPersonales } from '@/components/registro-horas/ObjetosPersonales';
+import { TareasARealizar } from '@/components/registro-horas/TareasARealizar';
 
 interface RegistroHorasProps {
   empleados: Empleado[];
@@ -22,6 +24,8 @@ export function RegistroHoras({
 }: RegistroHorasProps) {
   const [cedula, setCedula] = useState('');
   const [empleadoEncontrado, setEmpleadoEncontrado] = useState<Empleado | null>(null);
+  const [objetosPersonales, setObjetosPersonales] = useState<string>('NINGUNO');
+  const [tareas, setTareas] = useState<string[]>([]);
   const { toast } = useToast();
 
   const now = new Date();
@@ -87,15 +91,20 @@ export function RegistroHoras({
     getRegistrosPorEmpleado(e.id).length > 0
   );
 
+  const toggleTarea = (value: string) => {
+    setTareas((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
+  };
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-2 text-lg font-bold text-foreground">
-        <Clock className="w-5 h-5" />
+      {/* Section header */}
+      <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+        <Clock className="w-4 h-4" />
         REGISTRO DE HORAS
       </div>
+      <div className="h-px bg-border" />
 
-      {/* Search Form */}
+      {/* Form */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <label className="kiosk-label">CÉDULA</label>
@@ -136,28 +145,36 @@ export function RegistroHoras({
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-3">
+      {/* Extra fields like the reference */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <ObjetosPersonales value={objetosPersonales} onChange={setObjetosPersonales} />
+        <TareasARealizar selected={tareas} onToggle={toggleTarea} />
+      </div>
+
+      {/* Main action */}
+      <div>
         <button
           onClick={() => handleRegistro('ENTRADA')}
           disabled={!empleadoEncontrado}
-          className="kiosk-btn-success flex items-center gap-2 disabled:opacity-50"
+          className="kiosk-btn-primary w-full sm:w-auto flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <ArrowRightCircle className="w-5 h-5" />
-          REGISTRAR ENTRADA
+          REGISTRADOR DE ENTRADA
         </button>
         <button
           onClick={() => handleRegistro('SALIDA')}
           disabled={!empleadoEncontrado}
-          className="kiosk-btn-accent flex items-center gap-2 disabled:opacity-50"
+          className="mt-3 kiosk-btn-accent w-full sm:w-auto flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <ArrowLeftCircle className="w-5 h-5" />
           GENERAR SALIDA
         </button>
       </div>
 
+      <div className="h-px bg-border" />
+
       {/* Table */}
-      {empleadosConRegistros.length > 0 && (
+      {empleadosConRegistros.length > 0 ? (
         <div className="overflow-x-auto rounded-lg border border-border">
           <table className="kiosk-table">
             <thead>
@@ -212,20 +229,22 @@ export function RegistroHoras({
             </tbody>
           </table>
         </div>
+      ) : (
+        <div className="kiosk-empty">No hay registros para mostrar</div>
       )}
 
       {/* Export Buttons */}
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <button
           onClick={handleExport}
-          className="kiosk-btn-success flex items-center gap-2"
+          className="kiosk-btn-accent flex items-center justify-center gap-2"
         >
           <FileSpreadsheet className="w-5 h-5" />
           GENERAR EXCEL
         </button>
         <button
           onClick={() => {}}
-          className="kiosk-btn-primary flex items-center gap-2"
+          className="kiosk-btn-success flex items-center justify-center gap-2"
         >
           <User className="w-5 h-5" />
           MOSTRAR TODOS LOS REGISTROS ({registros.length})
