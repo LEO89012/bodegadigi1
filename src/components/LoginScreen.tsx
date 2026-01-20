@@ -1,0 +1,164 @@
+import { useState } from 'react';
+import { ShoppingCart, Building2, Lock } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+interface LoginScreenProps {
+  onLogin: (nombre: string, password: string) => Promise<unknown>;
+  onRegister: (nombre: string, password: string) => Promise<unknown>;
+}
+
+export function LoginScreen({ onLogin, onRegister }: LoginScreenProps) {
+  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [nombreTienda, setNombreTienda] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!nombreTienda.trim() || !password.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Por favor ingrese todos los campos',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: 'Error',
+        description: 'La contraseña debe tener al menos 6 caracteres',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (mode === 'login') {
+        await onLogin(nombreTienda, password);
+        toast({
+          title: '¡Bienvenido!',
+          description: `Acceso concedido a ${nombreTienda.toUpperCase()}`,
+        });
+      } else {
+        await onRegister(nombreTienda, password);
+        toast({
+          title: '¡Tienda registrada!',
+          description: `${nombreTienda.toUpperCase()} ha sido creada exitosamente`,
+        });
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error desconocido';
+      let friendlyMessage = message;
+      
+      if (message.includes('Invalid login credentials')) {
+        friendlyMessage = 'Credenciales inválidas. Verifique el nombre de tienda y contraseña.';
+      } else if (message.includes('User already registered')) {
+        friendlyMessage = 'Esta tienda ya está registrada. Intente iniciar sesión.';
+      } else if (message.includes('duplicate key')) {
+        friendlyMessage = 'Ya existe una tienda con este nombre.';
+      }
+      
+      toast({
+        title: 'Error',
+        description: friendlyMessage,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <ShoppingCart className="w-10 h-10 text-primary" />
+            <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
+            <ShoppingCart className="w-10 h-10 text-primary" />
+          </div>
+          <p className="text-muted-foreground">Sistema de Registro de Horas</p>
+        </div>
+
+        {/* Card */}
+        <div className="kiosk-card p-8">
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-bold text-primary mb-1">Acceso al Sistema</h2>
+            <p className="text-sm text-muted-foreground">Ingrese sus credenciales para continuar</p>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex gap-2 mb-6">
+            <button
+              type="button"
+              onClick={() => setMode('login')}
+              className={`flex-1 kiosk-tab ${mode === 'login' ? 'kiosk-tab-active' : 'kiosk-tab-inactive'}`}
+            >
+              Iniciar Sesión
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('register')}
+              className={`flex-1 kiosk-tab ${mode === 'register' ? 'kiosk-tab-active' : 'kiosk-tab-inactive'}`}
+            >
+              Registrar Tienda
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="kiosk-label">
+                <Building2 className="w-4 h-4" />
+                Nombre de la Tienda
+              </label>
+              <input
+                type="text"
+                value={nombreTienda}
+                onChange={(e) => setNombreTienda(e.target.value)}
+                placeholder="ALKOSTO PRUEBA"
+                className="kiosk-input"
+                disabled={loading}
+                autoComplete="username"
+              />
+            </div>
+
+            <div>
+              <label className="kiosk-label">
+                <Lock className="w-4 h-4" />
+                Contraseña
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="kiosk-input"
+                disabled={loading}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="kiosk-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Procesando...' : mode === 'login' ? 'Ingresar' : 'Registrar Tienda'}
+            </button>
+          </form>
+
+          {mode === 'register' && (
+            <p className="text-xs text-muted-foreground text-center mt-4">
+              Al registrar, se creará automáticamente un usuario interno para esta tienda.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,13 +1,52 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useAuth } from '@/hooks/useAuth';
+import { useEmpleados } from '@/hooks/useEmpleados';
+import { useRegistros } from '@/hooks/useRegistros';
+import { LoginScreen } from '@/components/LoginScreen';
+import { Dashboard } from '@/components/Dashboard';
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+  const { user, tienda, loading, login, register, logout } = useAuth();
+  const { 
+    empleados, 
+    addEmpleado, 
+    deleteEmpleado, 
+    findEmpleadoByCedula 
+  } = useEmpleados(tienda?.id);
+  const { 
+    registros, 
+    addRegistro, 
+    exportToExcel, 
+    getRegistrosPorEmpleado 
+  } = useRegistros();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Cargando...</p>
+        </div>
       </div>
-    </div>
+    );
+  }
+
+  if (!user || !tienda) {
+    return <LoginScreen onLogin={login} onRegister={register} />;
+  }
+
+  return (
+    <Dashboard
+      tienda={tienda}
+      empleados={empleados}
+      registros={registros}
+      onLogout={logout}
+      onAddEmpleado={addEmpleado}
+      onDeleteEmpleado={deleteEmpleado}
+      onAddRegistro={addRegistro}
+      onExportExcel={exportToExcel}
+      findEmpleadoByCedula={findEmpleadoByCedula}
+      getRegistrosPorEmpleado={getRegistrosPorEmpleado}
+    />
   );
 };
 
