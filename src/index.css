@@ -134,4 +134,45 @@
   .kiosk-badge-exit {
     @apply inline-block px-3 py-1 bg-accent/20 text-accent font-bold rounded text-sm;
   }
+
+  .kiosk-panel {
+    @apply bg-secondary/40 border border-border rounded-lg p-4;
+  }
+
+  .kiosk-panel-title {
+    @apply text-xs font-bold text-muted-foreground uppercase tracking-wide mb-3;
+  }
+
+  .kiosk-radio-row {
+    @apply flex items-center gap-3;
+  }
+
+  .kiosk-radio {
+    @apply h-4 w-4;
+    accent-color: hsl(var(--primary));
+  }
+
+  .kiosk-radio-label {
+    @apply text-sm text-foreground;
+  }
+
+  .kiosk-chip-grid {
+    @apply grid grid-cols-2 sm:grid-cols-3 gap-2;
+  }
+
+  .kiosk-chip {
+    @apply w-full px-3 py-2 text-xs font-semibold rounded-md border transition-colors;
+  }
+
+  .kiosk-chip-inactive {
+    @apply bg-card text-muted-foreground border-border hover:bg-secondary/60;
+  }
+
+  .kiosk-chip-active {
+    @apply bg-primary text-primary-foreground border-primary;
+  }
+
+  .kiosk-empty {
+    @apply text-center text-sm text-muted-foreground py-8;
+  }
 }
