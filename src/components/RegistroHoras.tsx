@@ -72,6 +72,8 @@ export function RegistroHoras({
     });
     setCedula('');
     setEmpleadoEncontrado(null);
+    setObjetosPersonales('NINGUNO');
+    setTareas([]);
   };
 
   const handleSalidaDirecta = (empleado: Empleado) => {
@@ -85,6 +87,8 @@ export function RegistroHoras({
     });
     setCedula('');
     setEmpleadoEncontrado(null);
+    setObjetosPersonales('NINGUNO');
+    setTareas([]);
   };
 
   const handleExport = () => {
