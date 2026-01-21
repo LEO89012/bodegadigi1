@@ -9,7 +9,11 @@ interface RegistroHorasProps {
   empleados: Empleado[];
   registros: RegistroHora[];
   findEmpleadoByCedula: (cedula: string) => Empleado | undefined;
-  onAddRegistro: (empleado: Empleado, tipo: 'ENTRADA' | 'SALIDA') => RegistroHora;
+  onAddRegistro: (
+    empleado: Empleado,
+    tipo: 'ENTRADA' | 'SALIDA',
+    extras?: { objetosPersonales?: string; tareas?: string[] }
+  ) => RegistroHora;
   onExportExcel: () => boolean;
   getRegistrosPorEmpleado: (empleadoId: number) => RegistroHora[];
 }
@@ -58,7 +62,10 @@ export function RegistroHoras({
       return;
     }
 
-    onAddRegistro(empleadoEncontrado, tipo);
+    onAddRegistro(empleadoEncontrado, tipo, {
+      objetosPersonales,
+      tareas,
+    });
     toast({
       title: `${tipo} registrada`,
       description: `${empleadoEncontrado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
@@ -68,7 +75,10 @@ export function RegistroHoras({
   };
 
   const handleSalidaDirecta = (empleado: Empleado) => {
-    onAddRegistro(empleado, 'SALIDA');
+    onAddRegistro(empleado, 'SALIDA', {
+      objetosPersonales,
+      tareas,
+    });
     toast({
       title: 'SALIDA registrada',
       description: `${empleado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
