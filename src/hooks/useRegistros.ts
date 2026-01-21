@@ -5,7 +5,11 @@ import * as XLSX from 'xlsx';
 export function useRegistros() {
   const [registros, setRegistros] = useState<RegistroHora[]>([]);
 
-  const addRegistro = useCallback((empleado: Empleado, tipo: 'ENTRADA' | 'SALIDA') => {
+  const addRegistro = useCallback((
+    empleado: Empleado,
+    tipo: 'ENTRADA' | 'SALIDA',
+    extras?: { objetosPersonales?: string; tareas?: string[] }
+  ) => {
     const now = new Date();
     const fecha = now.toLocaleDateString('es-CO', {
       day: '2-digit',
@@ -28,6 +32,8 @@ export function useRegistros() {
       fecha,
       hora,
       timestamp: now,
+      objetosPersonales: extras?.objetosPersonales,
+      tareas: extras?.tareas,
     };
 
     setRegistros(prev => [nuevoRegistro, ...prev]);
@@ -52,6 +58,8 @@ export function useRegistros() {
       'TIPO': r.tipo,
       'FECHA': r.fecha,
       'HORA': r.hora,
+      'OBJETOS PERSONALES': r.objetosPersonales || '',
+      'TAREAS': (r.tareas || []).join(', '),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -66,6 +74,8 @@ export function useRegistros() {
       { wch: 10 }, // Tipo
       { wch: 12 }, // Fecha
       { wch: 12 }, // Hora
+      { wch: 28 }, // Objetos
+      { wch: 40 }, // Tareas
     ];
     worksheet['!cols'] = colWidths;
 

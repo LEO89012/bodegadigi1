@@ -23,6 +23,8 @@ export interface RegistroHora {
   fecha: string;
   hora: string;
   timestamp: Date;
+  objetosPersonales?: string;
+  tareas?: string[];
 }
 
 export type AreaEmpleado = 
