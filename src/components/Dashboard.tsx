@@ -12,7 +12,11 @@ interface DashboardProps {
   onLogout: () => void;
   onAddEmpleado: (cedula: string, nombre: string, area: string) => Promise<Empleado>;
   onDeleteEmpleado: (id: number) => Promise<void>;
-  onAddRegistro: (empleado: Empleado, tipo: 'ENTRADA' | 'SALIDA') => RegistroHora;
+  onAddRegistro: (
+    empleado: Empleado,
+    tipo: 'ENTRADA' | 'SALIDA',
+    extras?: { objetosPersonales?: string; tareas?: string[] }
+  ) => RegistroHora;
   onExportExcel: () => boolean;
   findEmpleadoByCedula: (cedula: string) => Empleado | undefined;
   getRegistrosPorEmpleado: (empleadoId: number) => RegistroHora[];
@@ -45,7 +49,7 @@ export function Dashboard({
                   src={ktronixAlkostoLogo}
                   alt="Logo Ktronix Alkosto"
                   loading="lazy"
-                  className="h-12 w-auto object-contain"
+                  className="h-16 sm:h-20 w-auto object-contain rounded-lg"
                 />
               </div>
               <div className="flex items-center justify-center gap-3 text-primary">

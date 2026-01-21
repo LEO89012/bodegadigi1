@@ -77,6 +77,19 @@ export function RegistroHoras({
   };
 
   const handleSalidaDirecta = (empleado: Empleado) => {
+    const registrosEmpleado = getRegistrosPorEmpleado(empleado.id);
+    const ultimo = registrosEmpleado[0];
+
+    // Solo permitir SALIDA si el último registro fue ENTRADA
+    if (!ultimo || ultimo.tipo !== 'ENTRADA') {
+      toast({
+        title: 'Salida no permitida',
+        description: 'Debe registrar una nueva ENTRADA antes de generar otra SALIDA.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     onAddRegistro(empleado, 'SALIDA', {
       objetosPersonales,
       tareas,
@@ -205,6 +218,7 @@ export function RegistroHoras({
             <tbody>
               {empleadosConRegistros.map(empleado => {
                 const registrosEmpleado = getRegistrosPorEmpleado(empleado.id);
+                const puedeGenerarSalida = registrosEmpleado[0]?.tipo === 'ENTRADA';
                 return (
                   <tr key={empleado.id}>
                     <td className="font-semibold">{empleado.nombre}</td>
@@ -230,7 +244,8 @@ export function RegistroHoras({
                     <td>
                       <button
                         onClick={() => handleSalidaDirecta(empleado)}
-                        className="kiosk-btn-accent text-sm py-2 px-4"
+                        disabled={!puedeGenerarSalida}
+                        className="kiosk-btn-accent text-sm py-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <ArrowLeftCircle className="w-4 h-4 inline mr-1" />
                         GENERAR SALIDA
