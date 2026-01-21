@@ -67,6 +67,16 @@ export function RegistroHoras({
     setEmpleadoEncontrado(null);
   };
 
+  const handleSalidaDirecta = (empleado: Empleado) => {
+    onAddRegistro(empleado, 'SALIDA');
+    toast({
+      title: 'SALIDA registrada',
+      description: `${empleado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
+    });
+    setCedula('');
+    setEmpleadoEncontrado(null);
+  };
+
   const handleExport = () => {
     if (registros.length === 0) {
       toast({
@@ -161,14 +171,6 @@ export function RegistroHoras({
           <ArrowRightCircle className="w-5 h-5" />
           REGISTRADOR DE ENTRADA
         </button>
-        <button
-          onClick={() => handleRegistro('SALIDA')}
-          disabled={!empleadoEncontrado}
-          className="mt-3 kiosk-btn-accent w-full sm:w-auto flex items-center justify-center gap-2 disabled:opacity-50"
-        >
-          <ArrowLeftCircle className="w-5 h-5" />
-          GENERAR SALIDA
-        </button>
       </div>
 
       <div className="h-px bg-border" />
@@ -213,10 +215,7 @@ export function RegistroHoras({
                     </td>
                     <td>
                       <button
-                        onClick={() => {
-                          setCedula(empleado.cedula);
-                          setEmpleadoEncontrado(empleado);
-                        }}
+                        onClick={() => handleSalidaDirecta(empleado)}
                         className="kiosk-btn-accent text-sm py-2 px-4"
                       >
                         <ArrowLeftCircle className="w-4 h-4 inline mr-1" />
