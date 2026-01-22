@@ -5,7 +5,6 @@ interface ObjetosPersonalesProps {
 
 const OPCIONES = [
   { value: 'BANDA/RELOJ INTELIGENTE', label: 'BANDA/RELOJ INTELIGENTE' },
-  { value: 'CELULAR CORPORATIVO', label: 'CELULAR CORPORATIVO' },
   { value: 'CELULAR PERSONAL', label: 'CELULAR PERSONAL' },
   { value: 'COMPUTADORA PORTÁTIL', label: 'COMPUTADORA PORTÁTIL' },
   { value: 'NO INGRESA NADA', label: 'NO INGRESA NADA' },
