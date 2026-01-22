@@ -28,7 +28,7 @@ export function RegistroHoras({
 }: RegistroHorasProps) {
   const [cedula, setCedula] = useState('');
   const [empleadoEncontrado, setEmpleadoEncontrado] = useState<Empleado | null>(null);
-  const [objetosPersonales, setObjetosPersonales] = useState<string>('NINGUNO');
+  const [objetosPersonales, setObjetosPersonales] = useState<string[]>(['NO INGRESA NADA']);
   const [tareas, setTareas] = useState<string[]>([]);
   const { toast } = useToast();
 
@@ -62,8 +62,10 @@ export function RegistroHoras({
       return;
     }
 
+    const objetosTexto = objetosPersonales.length ? objetosPersonales.join(', ') : '';
+
     onAddRegistro(empleadoEncontrado, tipo, {
-      objetosPersonales,
+      objetosPersonales: objetosTexto,
       tareas,
     });
     toast({
@@ -72,7 +74,7 @@ export function RegistroHoras({
     });
     setCedula('');
     setEmpleadoEncontrado(null);
-    setObjetosPersonales('NINGUNO');
+    setObjetosPersonales(['NO INGRESA NADA']);
     setTareas([]);
   };
 
@@ -90,8 +92,13 @@ export function RegistroHoras({
       return;
     }
 
+    // En SALIDA, conservar los objetos personales de la última ENTRADA
+    const ultimaEntrada = registrosEmpleado.find((r) => r.tipo === 'ENTRADA');
+    const objetosTextoActual = objetosPersonales.length ? objetosPersonales.join(', ') : '';
+    const objetosParaSalida = ultimaEntrada?.objetosPersonales || objetosTextoActual;
+
     onAddRegistro(empleado, 'SALIDA', {
-      objetosPersonales,
+      objetosPersonales: objetosParaSalida,
       tareas,
     });
     toast({
@@ -100,7 +107,7 @@ export function RegistroHoras({
     });
     setCedula('');
     setEmpleadoEncontrado(null);
-    setObjetosPersonales('NINGUNO');
+    setObjetosPersonales(['NO INGRESA NADA']);
     setTareas([]);
   };
 
@@ -129,7 +136,8 @@ export function RegistroHoras({
   );
 
   const toggleTarea = (value: string) => {
-    setTareas((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
+    // Solo permitir 1 tarea a la vez (click de nuevo para deseleccionar)
+    setTareas((prev) => (prev[0] === value ? [] : [value]));
   };
 
   return (
