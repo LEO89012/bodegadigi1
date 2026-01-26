@@ -49,6 +49,57 @@ export type Database = {
           },
         ]
       }
+      registros_horas: {
+        Row: {
+          area: string
+          cedula: string
+          created_at: string
+          empleado_id: number
+          exportado: boolean
+          fecha: string
+          hora: string
+          id: string
+          nombre: string
+          objetos_personales: string | null
+          tareas: string[] | null
+          tienda_id: string
+          timestamp: string
+          tipo: string
+        }
+        Insert: {
+          area: string
+          cedula: string
+          created_at?: string
+          empleado_id: number
+          exportado?: boolean
+          fecha: string
+          hora: string
+          id?: string
+          nombre: string
+          objetos_personales?: string | null
+          tareas?: string[] | null
+          tienda_id: string
+          timestamp?: string
+          tipo: string
+        }
+        Update: {
+          area?: string
+          cedula?: string
+          created_at?: string
+          empleado_id?: number
+          exportado?: boolean
+          fecha?: string
+          hora?: string
+          id?: string
+          nombre?: string
+          objetos_personales?: string | null
+          tareas?: string[] | null
+          tienda_id?: string
+          timestamp?: string
+          tipo?: string
+        }
+        Relationships: []
+      }
       tiendas: {
         Row: {
           created_at: string

@@ -13,8 +13,8 @@ interface RegistroHorasProps {
     empleado: Empleado,
     tipo: 'ENTRADA' | 'SALIDA',
     extras?: { objetosPersonales?: string; tareas?: string[] }
-  ) => RegistroHora;
-  onExportExcel: () => boolean;
+  ) => Promise<RegistroHora | null>;
+  onExportExcel: () => Promise<boolean>;
   getRegistrosPorEmpleado: (empleadoId: number) => RegistroHora[];
 }
 
@@ -52,7 +52,7 @@ export function RegistroHoras({
     }
   };
 
-  const handleRegistro = (tipo: 'ENTRADA' | 'SALIDA') => {
+  const handleRegistro = async (tipo: 'ENTRADA' | 'SALIDA') => {
     if (!empleadoEncontrado) {
       toast({
         title: 'Error',
@@ -64,21 +64,24 @@ export function RegistroHoras({
 
     const objetosTexto = objetosPersonales.length ? objetosPersonales.join(', ') : '';
 
-    onAddRegistro(empleadoEncontrado, tipo, {
+    const registro = await onAddRegistro(empleadoEncontrado, tipo, {
       objetosPersonales: objetosTexto,
       tareas,
     });
-    toast({
-      title: `${tipo} registrada`,
-      description: `${empleadoEncontrado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
-    });
+    
+    if (registro) {
+      toast({
+        title: `${tipo} registrada`,
+        description: `${empleadoEncontrado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
+      });
+    }
     setCedula('');
     setEmpleadoEncontrado(null);
     setObjetosPersonales(['NO INGRESA NADA']);
     setTareas([]);
   };
 
-  const handleSalidaDirecta = (empleado: Empleado) => {
+  const handleSalidaDirecta = async (empleado: Empleado) => {
     const registrosEmpleado = getRegistrosPorEmpleado(empleado.id);
     const ultimo = registrosEmpleado[0];
 
@@ -97,21 +100,24 @@ export function RegistroHoras({
     const objetosTextoActual = objetosPersonales.length ? objetosPersonales.join(', ') : '';
     const objetosParaSalida = ultimaEntrada?.objetosPersonales || objetosTextoActual;
 
-    onAddRegistro(empleado, 'SALIDA', {
+    const registro = await onAddRegistro(empleado, 'SALIDA', {
       objetosPersonales: objetosParaSalida,
       tareas,
     });
-    toast({
-      title: 'SALIDA registrada',
-      description: `${empleado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
-    });
+    
+    if (registro) {
+      toast({
+        title: 'SALIDA registrada',
+        description: `${empleado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
+      });
+    }
     setCedula('');
     setEmpleadoEncontrado(null);
     setObjetosPersonales(['NO INGRESA NADA']);
     setTareas([]);
   };
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (registros.length === 0) {
       toast({
         title: 'Sin registros',
@@ -121,7 +127,7 @@ export function RegistroHoras({
       return;
     }
 
-    const success = onExportExcel();
+    const success = await onExportExcel();
     if (success) {
       toast({
         title: 'Excel generado',

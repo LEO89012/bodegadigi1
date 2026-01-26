@@ -14,8 +14,8 @@ interface DashboardProps {
   onAddRegistro: (empleado: Empleado, tipo: 'ENTRADA' | 'SALIDA', extras?: {
     objetosPersonales?: string;
     tareas?: string[];
-  }) => RegistroHora;
-  onExportExcel: () => boolean;
+  }) => Promise<RegistroHora | null>;
+  onExportExcel: () => Promise<boolean>;
   findEmpleadoByCedula: (cedula: string) => Empleado | undefined;
   getRegistrosPorEmpleado: (empleadoId: number) => RegistroHora[];
 }
