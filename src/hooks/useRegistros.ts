@@ -1,9 +1,49 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { RegistroHora, Empleado } from '@/types';
 import * as XLSX from 'xlsx';
 
+const STORAGE_KEY = 'registros_horas';
+
+function loadFromStorage(): RegistroHora[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // Reconstruct Date objects from timestamps
+      return parsed.map((r: RegistroHora & { timestamp: string }) => ({
+        ...r,
+        timestamp: new Date(r.timestamp),
+      }));
+    }
+  } catch (e) {
+    console.error('Error loading registros from storage:', e);
+  }
+  return [];
+}
+
+function saveToStorage(registros: RegistroHora[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+  } catch (e) {
+    console.error('Error saving registros to storage:', e);
+  }
+}
+
+function clearStorage() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {
+    console.error('Error clearing registros from storage:', e);
+  }
+}
+
 export function useRegistros() {
-  const [registros, setRegistros] = useState<RegistroHora[]>([]);
+  const [registros, setRegistros] = useState<RegistroHora[]>(() => loadFromStorage());
+
+  // Sync to localStorage whenever registros change
+  useEffect(() => {
+    saveToStorage(registros);
+  }, [registros]);
 
   const addRegistro = useCallback((
     empleado: Empleado,
@@ -82,8 +122,9 @@ export function useRegistros() {
     const fecha = new Date().toISOString().split('T')[0];
     XLSX.writeFile(workbook, `registros_${fecha}.xlsx`);
 
-    // Clear registros after export
+    // Clear registros after export and remove from storage
     setRegistros([]);
+    clearStorage();
     return true;
   }, [registros]);
 
@@ -93,6 +134,9 @@ export function useRegistros() {
     getUltimoRegistro,
     getRegistrosPorEmpleado,
     exportToExcel,
-    clearRegistros: () => setRegistros([]),
+    clearRegistros: () => {
+      setRegistros([]);
+      clearStorage();
+    },
   };
 }
