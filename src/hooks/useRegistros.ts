@@ -1,55 +1,84 @@
 import { useState, useCallback, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import type { RegistroHora, Empleado } from '@/types';
 import * as XLSX from 'xlsx';
 
-const STORAGE_KEY = 'registros_horas';
+export function useRegistros(tiendaId?: string) {
+  const [registros, setRegistros] = useState<RegistroHora[]>([]);
+  const [loading, setLoading] = useState(true);
 
-function loadFromStorage(): RegistroHora[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      // Reconstruct Date objects from timestamps
-      return parsed.map((r: RegistroHora & { timestamp: string }) => ({
-        ...r,
-        timestamp: new Date(r.timestamp),
-      }));
-    }
-  } catch (e) {
-    console.error('Error loading registros from storage:', e);
-  }
-  return [];
-}
-
-function saveToStorage(registros: RegistroHora[]) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
-  } catch (e) {
-    console.error('Error saving registros to storage:', e);
-  }
-}
-
-function clearStorage() {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch (e) {
-    console.error('Error clearing registros from storage:', e);
-  }
-}
-
-export function useRegistros() {
-  const [registros, setRegistros] = useState<RegistroHora[]>(() => loadFromStorage());
-
-  // Sync to localStorage whenever registros change
+  // Load registros from Supabase on mount and when tiendaId changes
   useEffect(() => {
-    saveToStorage(registros);
-  }, [registros]);
+    if (!tiendaId) {
+      setRegistros([]);
+      setLoading(false);
+      return;
+    }
 
-  const addRegistro = useCallback((
+    const fetchRegistros = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('registros_horas')
+        .select('*')
+        .eq('tienda_id', tiendaId)
+        .eq('exportado', false)
+        .order('timestamp', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching registros:', error);
+        setRegistros([]);
+      } else {
+        // Map database records to our RegistroHora type
+        const mapped: RegistroHora[] = (data || []).map((r) => ({
+          id: r.id,
+          empleadoId: r.empleado_id,
+          cedula: r.cedula,
+          nombre: r.nombre,
+          area: r.area,
+          tipo: r.tipo as 'ENTRADA' | 'SALIDA',
+          fecha: r.fecha,
+          hora: r.hora,
+          timestamp: new Date(r.timestamp),
+          objetosPersonales: r.objetos_personales || undefined,
+          tareas: r.tareas || undefined,
+        }));
+        setRegistros(mapped);
+      }
+      setLoading(false);
+    };
+
+    fetchRegistros();
+
+    // Subscribe to realtime changes
+    const channel = supabase
+      .channel('registros_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'registros_horas',
+          filter: `tienda_id=eq.${tiendaId}`,
+        },
+        () => {
+          // Refetch on any change
+          fetchRegistros();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [tiendaId]);
+
+  const addRegistro = useCallback(async (
     empleado: Empleado,
     tipo: 'ENTRADA' | 'SALIDA',
     extras?: { objetosPersonales?: string; tareas?: string[] }
-  ) => {
+  ): Promise<RegistroHora | null> => {
+    if (!tiendaId) return null;
+
     const now = new Date();
     const fecha = now.toLocaleDateString('es-CO', {
       day: '2-digit',
@@ -62,23 +91,48 @@ export function useRegistros() {
       second: '2-digit',
     });
 
+    const { data, error } = await supabase
+      .from('registros_horas')
+      .insert({
+        empleado_id: empleado.id,
+        cedula: empleado.cedula,
+        nombre: empleado.nombre,
+        area: empleado.area,
+        tipo,
+        fecha,
+        hora,
+        timestamp: now.toISOString(),
+        objetos_personales: extras?.objetosPersonales || null,
+        tareas: extras?.tareas || null,
+        tienda_id: tiendaId,
+        exportado: false,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding registro:', error);
+      return null;
+    }
+
     const nuevoRegistro: RegistroHora = {
-      id: crypto.randomUUID(),
-      empleadoId: empleado.id,
-      cedula: empleado.cedula,
-      nombre: empleado.nombre,
-      area: empleado.area,
-      tipo,
-      fecha,
-      hora,
-      timestamp: now,
-      objetosPersonales: extras?.objetosPersonales,
-      tareas: extras?.tareas,
+      id: data.id,
+      empleadoId: data.empleado_id,
+      cedula: data.cedula,
+      nombre: data.nombre,
+      area: data.area,
+      tipo: data.tipo as 'ENTRADA' | 'SALIDA',
+      fecha: data.fecha,
+      hora: data.hora,
+      timestamp: new Date(data.timestamp),
+      objetosPersonales: data.objetos_personales || undefined,
+      tareas: data.tareas || undefined,
     };
 
+    // Update local state immediately
     setRegistros(prev => [nuevoRegistro, ...prev]);
     return nuevoRegistro;
-  }, []);
+  }, [tiendaId]);
 
   const getUltimoRegistro = useCallback((empleadoId: number): RegistroHora | undefined => {
     return registros.find(r => r.empleadoId === empleadoId);
@@ -88,7 +142,7 @@ export function useRegistros() {
     return registros.filter(r => r.empleadoId === empleadoId);
   }, [registros]);
 
-  const exportToExcel = useCallback(() => {
+  const exportToExcel = useCallback(async () => {
     if (registros.length === 0) return false;
 
     const data = registros.map(r => ({
@@ -122,21 +176,39 @@ export function useRegistros() {
     const fecha = new Date().toISOString().split('T')[0];
     XLSX.writeFile(workbook, `registros_${fecha}.xlsx`);
 
-    // Clear registros after export and remove from storage
+    // Mark registros as exported in database
+    const ids = registros.map(r => r.id);
+    const { error } = await supabase
+      .from('registros_horas')
+      .update({ exportado: true })
+      .in('id', ids);
+
+    if (error) {
+      console.error('Error marking registros as exported:', error);
+    }
+
+    // Clear local state (they won't appear anymore because exportado=true)
     setRegistros([]);
-    clearStorage();
     return true;
   }, [registros]);
 
   return {
     registros,
+    loading,
     addRegistro,
     getUltimoRegistro,
     getRegistrosPorEmpleado,
     exportToExcel,
-    clearRegistros: () => {
+    clearRegistros: async () => {
+      // Delete non-exported registros
+      if (tiendaId) {
+        await supabase
+          .from('registros_horas')
+          .delete()
+          .eq('tienda_id', tiendaId)
+          .eq('exportado', false);
+      }
       setRegistros([]);
-      clearStorage();
     },
   };
 }

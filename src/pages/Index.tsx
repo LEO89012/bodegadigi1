@@ -13,11 +13,12 @@ const Index = () => {
     findEmpleadoByCedula 
   } = useEmpleados(tienda?.id);
   const { 
-    registros, 
+    registros,
+    loading: registrosLoading,
     addRegistro, 
     exportToExcel, 
     getRegistrosPorEmpleado 
-  } = useRegistros();
+  } = useRegistros(tienda?.id);
 
   if (loading) {
     return (
