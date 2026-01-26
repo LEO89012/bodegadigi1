@@ -176,15 +176,15 @@ export function useRegistros(tiendaId?: string) {
     const fecha = new Date().toISOString().split('T')[0];
     XLSX.writeFile(workbook, `registros_${fecha}.xlsx`);
 
-    // Mark registros as exported in database
+    // Delete registros from database after export
     const ids = registros.map(r => r.id);
     const { error } = await supabase
       .from('registros_horas')
-      .update({ exportado: true })
+      .delete()
       .in('id', ids);
 
     if (error) {
-      console.error('Error marking registros as exported:', error);
+      console.error('Error deleting registros:', error);
     }
 
     // Clear local state (they won't appear anymore because exportado=true)
