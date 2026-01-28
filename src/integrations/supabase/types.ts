@@ -20,6 +20,7 @@ export type Database = {
           cedula: string
           created_at: string
           id: number
+          is_global: boolean
           nombre: string
           tienda_id: string
         }
@@ -28,6 +29,7 @@ export type Database = {
           cedula: string
           created_at?: string
           id?: number
+          is_global?: boolean
           nombre: string
           tienda_id: string
         }
@@ -36,6 +38,7 @@ export type Database = {
           cedula?: string
           created_at?: string
           id?: number
+          is_global?: boolean
           nombre?: string
           tienda_id?: string
         }
@@ -48,6 +51,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      registros_admin: {
+        Row: {
+          area: string
+          cedula: string
+          created_at: string
+          empleado_id: number
+          fecha: string
+          hora: string
+          id: string
+          nombre: string
+          objetos_personales: string | null
+          tareas: string[] | null
+          tienda_id: string
+          tienda_nombre: string | null
+          timestamp: string
+          tipo: string
+        }
+        Insert: {
+          area: string
+          cedula: string
+          created_at?: string
+          empleado_id: number
+          fecha: string
+          hora: string
+          id?: string
+          nombre: string
+          objetos_personales?: string | null
+          tareas?: string[] | null
+          tienda_id: string
+          tienda_nombre?: string | null
+          timestamp?: string
+          tipo: string
+        }
+        Update: {
+          area?: string
+          cedula?: string
+          created_at?: string
+          empleado_id?: number
+          fecha?: string
+          hora?: string
+          id?: string
+          nombre?: string
+          objetos_personales?: string | null
+          tareas?: string[] | null
+          tienda_id?: string
+          tienda_nombre?: string | null
+          timestamp?: string
+          tipo?: string
+        }
+        Relationships: []
       }
       registros_horas: {
         Row: {

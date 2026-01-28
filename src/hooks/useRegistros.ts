@@ -115,6 +115,27 @@ export function useRegistros(tiendaId?: string) {
       return null;
     }
 
+    // Also insert into registros_admin for real-time monitoring
+    const { error: adminError } = await supabase
+      .from('registros_admin')
+      .insert({
+        empleado_id: empleado.id,
+        cedula: empleado.cedula,
+        nombre: empleado.nombre,
+        area: empleado.area,
+        tipo,
+        fecha,
+        hora,
+        timestamp: now.toISOString(),
+        objetos_personales: extras?.objetosPersonales || null,
+        tareas: extras?.tareas || null,
+        tienda_id: tiendaId,
+      });
+
+    if (adminError) {
+      console.error('Error adding admin registro:', adminError);
+    }
+
     const nuevoRegistro: RegistroHora = {
       id: data.id,
       empleadoId: data.empleado_id,
