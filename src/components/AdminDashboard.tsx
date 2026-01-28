@@ -1,31 +1,28 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Users, Clock, RefreshCw } from 'lucide-react';
 import { useAdminRegistros, EmpleadoEstado } from '@/hooks/useAdminRegistros';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 interface AdminDashboardProps {
   tiendaId: string;
   tiendaNombre: string;
 }
-
-export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) {
+export function AdminDashboard({
+  tiendaId,
+  tiendaNombre
+}: AdminDashboardProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { registros, loading, getEmpleadosEstado, refetch } = useAdminRegistros(tiendaId);
-  
+  const {
+    registros,
+    loading,
+    getEmpleadosEstado,
+    refetch
+  } = useAdminRegistros(tiendaId);
   const empleadosEstado = getEmpleadosEstado();
   const empleadosDentro = empleadosEstado.filter(e => e.estado === 'DENTRO');
   const empleadosFuera = empleadosEstado.filter(e => e.estado === 'FUERA');
-
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+  return <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <button className="kiosk-btn-primary flex items-center justify-center gap-2 bg-primary/80 hover:bg-primary">
+        <button className="kiosk-btn-primary bg-sky-900 hover:bg-sky-800 flex items-center justify-center text-center shadow-none rounded-3xl opacity-90 border-4 border-none border-[#9797f2]/[0.83] gap-[19px]">
           <Eye className="w-5 h-5" />
           VISUALIZACIÓN ADMIN
         </button>
@@ -63,11 +60,7 @@ export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) 
 
           {/* Refresh Button */}
           <div className="flex justify-end">
-            <button 
-              onClick={() => refetch()}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-primary hover:bg-primary/10 rounded-lg transition-colors disabled:opacity-50"
-            >
+            <button onClick={() => refetch()} disabled={loading} className="flex items-center gap-2 px-4 py-2 text-sm text-primary hover:bg-primary/10 rounded-lg transition-colors disabled:opacity-50">
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Actualizar
             </button>
@@ -79,8 +72,7 @@ export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) 
               <div className="w-3 h-3 rounded-full bg-success"></div>
               EMPLEADOS DENTRO DE BODEGA ({empleadosDentro.length})
             </h3>
-            {empleadosDentro.length > 0 ? (
-              <div className="overflow-x-auto rounded-lg border border-border">
+            {empleadosDentro.length > 0 ? <div className="overflow-x-auto rounded-lg border border-border">
                 <table className="kiosk-table">
                   <thead>
                     <tr>
@@ -92,15 +84,10 @@ export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) 
                     </tr>
                   </thead>
                   <tbody>
-                    {empleadosDentro.map((emp) => (
-                      <EmpleadoRow key={emp.empleadoId} empleado={emp} />
-                    ))}
+                    {empleadosDentro.map(emp => <EmpleadoRow key={emp.empleadoId} empleado={emp} />)}
                   </tbody>
                 </table>
-              </div>
-            ) : (
-              <div className="kiosk-empty">No hay empleados dentro de bodega</div>
-            )}
+              </div> : <div className="kiosk-empty">No hay empleados dentro de bodega</div>}
           </div>
 
           {/* Employees Outside Table */}
@@ -109,8 +96,7 @@ export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) 
               <div className="w-3 h-3 rounded-full bg-accent"></div>
               EMPLEADOS FUERA DE BODEGA ({empleadosFuera.length})
             </h3>
-            {empleadosFuera.length > 0 ? (
-              <div className="overflow-x-auto rounded-lg border border-border">
+            {empleadosFuera.length > 0 ? <div className="overflow-x-auto rounded-lg border border-border">
                 <table className="kiosk-table">
                   <thead>
                     <tr>
@@ -122,21 +108,16 @@ export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) 
                     </tr>
                   </thead>
                   <tbody>
-                    {empleadosFuera.map((emp) => (
-                      <tr key={emp.empleadoId}>
+                    {empleadosFuera.map(emp => <tr key={emp.empleadoId}>
                         <td className="font-semibold">{emp.nombre}</td>
                         <td>{emp.area}</td>
                         <td>{emp.ultimaEntrada?.hora || '-'}</td>
                         <td>{emp.ultimaSalida?.hora || '-'}</td>
                         <td>{emp.ultimaSalida?.fecha || emp.ultimaEntrada?.fecha || '-'}</td>
-                      </tr>
-                    ))}
+                      </tr>)}
                   </tbody>
                 </table>
-              </div>
-            ) : (
-              <div className="kiosk-empty">No hay empleados fuera de bodega</div>
-            )}
+              </div> : <div className="kiosk-empty">No hay empleados fuera de bodega</div>}
           </div>
 
           {/* All Registros History */}
@@ -145,8 +126,7 @@ export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) 
               <Clock className="w-4 h-4" />
               HISTORIAL DE REGISTROS DEL DÍA ({registros.length})
             </h3>
-            {registros.length > 0 ? (
-              <div className="overflow-x-auto rounded-lg border border-border max-h-64">
+            {registros.length > 0 ? <div className="overflow-x-auto rounded-lg border border-border max-h-64">
                 <table className="kiosk-table">
                   <thead className="sticky top-0">
                     <tr>
@@ -158,8 +138,7 @@ export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) 
                     </tr>
                   </thead>
                   <tbody>
-                    {registros.slice(0, 50).map((r) => (
-                      <tr key={r.id}>
+                    {registros.slice(0, 50).map(r => <tr key={r.id}>
                         <td className="font-semibold">{r.nombre}</td>
                         <td>
                           <span className={r.tipo === 'ENTRADA' ? 'kiosk-badge-entry' : 'kiosk-badge-exit'}>
@@ -171,14 +150,10 @@ export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) 
                         <td className="text-sm text-muted-foreground max-w-[200px] truncate">
                           {r.objetosPersonales || '-'}
                         </td>
-                      </tr>
-                    ))}
+                      </tr>)}
                   </tbody>
                 </table>
-              </div>
-            ) : (
-              <div className="kiosk-empty">No hay registros del día</div>
-            )}
+              </div> : <div className="kiosk-empty">No hay registros del día</div>}
           </div>
 
           {/* Info Note */}
@@ -188,13 +163,14 @@ export function AdminDashboard({ tiendaId, tiendaNombre }: AdminDashboardProps) 
           </div>
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 }
-
-function EmpleadoRow({ empleado }: { empleado: EmpleadoEstado }) {
-  return (
-    <tr>
+function EmpleadoRow({
+  empleado
+}: {
+  empleado: EmpleadoEstado;
+}) {
+  return <tr>
       <td className="font-semibold">{empleado.nombre}</td>
       <td>{empleado.area}</td>
       <td className="text-sm text-muted-foreground max-w-[200px] truncate">
@@ -202,6 +178,5 @@ function EmpleadoRow({ empleado }: { empleado: EmpleadoEstado }) {
       </td>
       <td>{empleado.ultimaEntrada?.hora || '-'}</td>
       <td>{empleado.ultimaEntrada?.fecha || '-'}</td>
-    </tr>
-  );
+    </tr>;
 }
