@@ -29,6 +29,10 @@ export function useEmpleados(tiendaId: string | undefined) {
   const addEmpleado = async (cedula: string, nombre: string, area: string) => {
     if (!tiendaId) throw new Error('No hay tienda autenticada');
 
+    // Check if this is a global role
+    const globalRoles = ['ADMINISTRACIÓN', 'SISTEMAS', 'EXTERNO', 'SUPERVISOR', 'MANTENIMIENTO'];
+    const isGlobal = globalRoles.includes(area.toUpperCase());
+
     const { data, error } = await supabase
       .from('empleados')
       .insert({
@@ -36,6 +40,7 @@ export function useEmpleados(tiendaId: string | undefined) {
         cedula,
         nombre: nombre.toUpperCase(),
         area,
+        is_global: isGlobal,
       })
       .select()
       .single();

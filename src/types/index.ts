@@ -10,6 +10,7 @@ export interface Empleado {
   cedula: string;
   nombre: string;
   area: string;
+  is_global: boolean;
   created_at: string;
 }
 
@@ -32,4 +33,6 @@ export type AreaEmpleado =
   | 'PUNTO DE VENTA'
   | 'EXTERNO'
   | 'BODEGA'
-  | 'SISTEMAS';
+  | 'SISTEMAS'
+  | 'SUPERVISOR'
+  | 'MANTENIMIENTO';

@@ -17,6 +17,9 @@ const AREAS: AreaEmpleado[] = [
   'SISTEMAS',
 ];
 
+// Roles globales que no deben aparecer en la lista pública
+const GLOBAL_ROLES = ['ADMINISTRACIÓN', 'SISTEMAS', 'EXTERNO', 'SUPERVISOR', 'MANTENIMIENTO'];
+
 export function RegistroEmpleados({
   empleados,
   onAddEmpleado,
@@ -144,47 +147,56 @@ export function RegistroEmpleados({
         </button>
       </div>
 
-      {/* Table */}
-      {empleados.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-border">
-          <table className="kiosk-table">
-            <thead>
-              <tr>
-                <th>CÉDULA</th>
-                <th>NOMBRE</th>
-                <th>ÁREA</th>
-                <th>ACCIONES</th>
-              </tr>
-            </thead>
-            <tbody>
-              {empleados.map(empleado => (
-                <tr key={empleado.id}>
-                  <td>{empleado.cedula}</td>
-                  <td className="font-semibold">{empleado.nombre}</td>
-                  <td>{empleado.area}</td>
-                  <td>
-                    <button
-                      onClick={() => handleDelete(empleado)}
-                      className="kiosk-btn-destructive text-sm py-2 px-4 flex items-center gap-1"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      BORRAR
-                    </button>
-                  </td>
+      {/* Table - Filter out global roles from public list */}
+      {(() => {
+        const empleadosPublicos = empleados.filter(e => !e.is_global);
+        return empleadosPublicos.length > 0 ? (
+          <div className="overflow-x-auto rounded-lg border border-border">
+            <table className="kiosk-table">
+              <thead>
+                <tr>
+                  <th>CÉDULA</th>
+                  <th>NOMBRE</th>
+                  <th>ÁREA</th>
+                  <th>ACCIONES</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {empleadosPublicos.map(empleado => (
+                  <tr key={empleado.id}>
+                    <td>{empleado.cedula}</td>
+                    <td className="font-semibold">{empleado.nombre}</td>
+                    <td>{empleado.area}</td>
+                    <td>
+                      <button
+                        onClick={() => handleDelete(empleado)}
+                        className="kiosk-btn-destructive text-sm py-2 px-4 flex items-center gap-1"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        BORRAR
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null;
+      })()}
 
-      {empleados.length === 0 && (
+      {empleados.filter(e => !e.is_global).length === 0 && (
         <div className="text-center py-12 text-muted-foreground">
           <Users className="w-16 h-16 mx-auto mb-4 opacity-30" />
           <p>No hay empleados registrados</p>
           <p className="text-sm">Agregue empleados usando el formulario superior</p>
         </div>
       )}
+
+      {/* Info about global roles */}
+      <div className="text-xs text-muted-foreground bg-secondary/30 p-3 rounded-lg mt-4">
+        <p>ℹ️ Los roles de Administración, Sistemas, Externo, Supervisor y Mantenimiento son globales y no aparecen en esta lista.</p>
+        <p>Estos empleados serán visibles solo cuando registren su hora en una tienda específica.</p>
+      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { Empleado, RegistroHora } from '@/types';
 import { ObjetosPersonales } from '@/components/registro-horas/ObjetosPersonales';
 import { TareasARealizar } from '@/components/registro-horas/TareasARealizar';
+import { AdminDashboard } from './AdminDashboard';
 
 interface RegistroHorasProps {
   empleados: Empleado[];
@@ -16,6 +17,8 @@ interface RegistroHorasProps {
   ) => Promise<RegistroHora | null>;
   onExportExcel: () => Promise<boolean>;
   getRegistrosPorEmpleado: (empleadoId: number) => RegistroHora[];
+  tiendaId: string;
+  tiendaNombre: string;
 }
 
 export function RegistroHoras({
@@ -25,6 +28,8 @@ export function RegistroHoras({
   onAddRegistro,
   onExportExcel,
   getRegistrosPorEmpleado,
+  tiendaId,
+  tiendaNombre,
 }: RegistroHorasProps) {
   const [cedula, setCedula] = useState('');
   const [empleadoEncontrado, setEmpleadoEncontrado] = useState<Empleado | null>(null);
@@ -284,6 +289,7 @@ export function RegistroHoras({
           <FileSpreadsheet className="w-5 h-5" />
           GENERAR EXCEL
         </button>
+        <AdminDashboard tiendaId={tiendaId} tiendaNombre={tiendaNombre} />
         <button
           onClick={() => {}}
           className="kiosk-btn-success flex items-center justify-center gap-2"

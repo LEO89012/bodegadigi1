@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ShoppingCart, LogOut } from 'lucide-react';
 import { RegistroHoras } from './RegistroHoras';
 import { RegistroEmpleados } from './RegistroEmpleados';
+import { AdminDashboard } from './AdminDashboard';
 import type { Tienda, Empleado, RegistroHora } from '@/types';
 import ktronixAlkostoLogo from '@/assets/ktronix-alkosto.png';
 interface DashboardProps {
@@ -68,7 +69,7 @@ export function Dashboard({
           </div>
 
           {/* Content */}
-          {activeTab === 'horas' ? <RegistroHoras empleados={empleados} registros={registros} findEmpleadoByCedula={findEmpleadoByCedula} onAddRegistro={onAddRegistro} onExportExcel={onExportExcel} getRegistrosPorEmpleado={getRegistrosPorEmpleado} /> : <RegistroEmpleados empleados={empleados} onAddEmpleado={onAddEmpleado} onDeleteEmpleado={onDeleteEmpleado} />}
+          {activeTab === 'horas' ? <RegistroHoras empleados={empleados} registros={registros} findEmpleadoByCedula={findEmpleadoByCedula} onAddRegistro={onAddRegistro} onExportExcel={onExportExcel} getRegistrosPorEmpleado={getRegistrosPorEmpleado} tiendaId={tienda.id} tiendaNombre={tienda.nombre} /> : <RegistroEmpleados empleados={empleados} onAddEmpleado={onAddEmpleado} onDeleteEmpleado={onDeleteEmpleado} />}
         </div>
       </div>
     </div>;
