@@ -5,22 +5,19 @@ import type { Empleado, RegistroHora } from '@/types';
 import { ObjetosPersonales } from '@/components/registro-horas/ObjetosPersonales';
 import { TareasARealizar } from '@/components/registro-horas/TareasARealizar';
 import { AdminDashboard } from './AdminDashboard';
-
 interface RegistroHorasProps {
   empleados: Empleado[];
   registros: RegistroHora[];
   findEmpleadoByCedula: (cedula: string) => Empleado | undefined;
-  onAddRegistro: (
-    empleado: Empleado,
-    tipo: 'ENTRADA' | 'SALIDA',
-    extras?: { objetosPersonales?: string; tareas?: string[] }
-  ) => Promise<RegistroHora | null>;
+  onAddRegistro: (empleado: Empleado, tipo: 'ENTRADA' | 'SALIDA', extras?: {
+    objetosPersonales?: string;
+    tareas?: string[];
+  }) => Promise<RegistroHora | null>;
   onExportExcel: () => Promise<boolean>;
   getRegistrosPorEmpleado: (empleadoId: number) => RegistroHora[];
   tiendaId: string;
   tiendaNombre: string;
 }
-
 export function RegistroHoras({
   empleados,
   registros,
@@ -29,14 +26,15 @@ export function RegistroHoras({
   onExportExcel,
   getRegistrosPorEmpleado,
   tiendaId,
-  tiendaNombre,
+  tiendaNombre
 }: RegistroHorasProps) {
   const [cedula, setCedula] = useState('');
   const [empleadoEncontrado, setEmpleadoEncontrado] = useState<Empleado | null>(null);
   const [objetosPersonales, setObjetosPersonales] = useState<string[]>(['NO INGRESA NADA']);
   const [tareas, setTareas] = useState<string[]>([]);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const now = new Date();
   const horaActual = now.toLocaleString('es-CO', {
     day: '2-digit',
@@ -44,9 +42,8 @@ export function RegistroHoras({
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
+    second: '2-digit'
   });
-
   const handleCedulaChange = (value: string) => {
     setCedula(value);
     if (value.length >= 3) {
@@ -56,28 +53,24 @@ export function RegistroHoras({
       setEmpleadoEncontrado(null);
     }
   };
-
   const handleRegistro = async (tipo: 'ENTRADA' | 'SALIDA') => {
     if (!empleadoEncontrado) {
       toast({
         title: 'Error',
         description: 'Primero busque un empleado por cédula',
-        variant: 'destructive',
+        variant: 'destructive'
       });
       return;
     }
-
     const objetosTexto = objetosPersonales.length ? objetosPersonales.join(', ') : '';
-
     const registro = await onAddRegistro(empleadoEncontrado, tipo, {
       objetosPersonales: objetosTexto,
-      tareas,
+      tareas
     });
-    
     if (registro) {
       toast({
         title: `${tipo} registrada`,
-        description: `${empleadoEncontrado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
+        description: `${empleadoEncontrado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`
       });
     }
     setCedula('');
@@ -85,7 +78,6 @@ export function RegistroHoras({
     setObjetosPersonales(['NO INGRESA NADA']);
     setTareas([]);
   };
-
   const handleSalidaDirecta = async (empleado: Empleado) => {
     const registrosEmpleado = getRegistrosPorEmpleado(empleado.id);
     const ultimo = registrosEmpleado[0];
@@ -95,25 +87,23 @@ export function RegistroHoras({
       toast({
         title: 'Salida no permitida',
         description: 'Debe registrar una nueva ENTRADA antes de generar otra SALIDA.',
-        variant: 'destructive',
+        variant: 'destructive'
       });
       return;
     }
 
     // En SALIDA, conservar los objetos personales de la última ENTRADA
-    const ultimaEntrada = registrosEmpleado.find((r) => r.tipo === 'ENTRADA');
+    const ultimaEntrada = registrosEmpleado.find(r => r.tipo === 'ENTRADA');
     const objetosTextoActual = objetosPersonales.length ? objetosPersonales.join(', ') : '';
     const objetosParaSalida = ultimaEntrada?.objetosPersonales || objetosTextoActual;
-
     const registro = await onAddRegistro(empleado, 'SALIDA', {
       objetosPersonales: objetosParaSalida,
-      tareas,
+      tareas
     });
-    
     if (registro) {
       toast({
         title: 'SALIDA registrada',
-        description: `${empleado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
+        description: `${empleado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`
       });
     }
     setCedula('');
@@ -121,38 +111,31 @@ export function RegistroHoras({
     setObjetosPersonales(['NO INGRESA NADA']);
     setTareas([]);
   };
-
   const handleExport = async () => {
     if (registros.length === 0) {
       toast({
         title: 'Sin registros',
         description: 'No hay registros para exportar',
-        variant: 'destructive',
+        variant: 'destructive'
       });
       return;
     }
-
     const success = await onExportExcel();
     if (success) {
       toast({
         title: 'Excel generado',
-        description: 'Los registros han sido exportados y limpiados',
+        description: 'Los registros han sido exportados y limpiados'
       });
     }
   };
 
   // Get unique employees that have registros
-  const empleadosConRegistros = empleados.filter(e => 
-    getRegistrosPorEmpleado(e.id).length > 0
-  );
-
+  const empleadosConRegistros = empleados.filter(e => getRegistrosPorEmpleado(e.id).length > 0);
   const toggleTarea = (value: string) => {
     // Solo permitir 1 tarea a la vez (click de nuevo para deseleccionar)
-    setTareas((prev) => (prev[0] === value ? [] : [value]));
+    setTareas(prev => prev[0] === value ? [] : [value]);
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Section header */}
       <div className="flex items-center gap-2 text-sm font-bold text-foreground">
         <Clock className="w-4 h-4" />
@@ -164,40 +147,19 @@ export function RegistroHoras({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <label className="kiosk-label">CÉDULA</label>
-          <input
-            type="text"
-            value={cedula}
-            onChange={(e) => handleCedulaChange(e.target.value)}
-            placeholder="Ingrese cédula"
-            className="kiosk-input"
-          />
+          <input type="text" value={cedula} onChange={e => handleCedulaChange(e.target.value)} placeholder="Ingrese cédula" className="kiosk-input" />
         </div>
         <div>
           <label className="kiosk-label">NOMBRE</label>
-          <input
-            type="text"
-            value={empleadoEncontrado?.nombre || ''}
-            disabled
-            className="kiosk-input bg-secondary/30"
-          />
+          <input type="text" value={empleadoEncontrado?.nombre || ''} disabled className="kiosk-input bg-secondary/30" />
         </div>
         <div>
           <label className="kiosk-label">ÁREA</label>
-          <input
-            type="text"
-            value={empleadoEncontrado?.area || ''}
-            disabled
-            className="kiosk-input bg-secondary/30"
-          />
+          <input type="text" value={empleadoEncontrado?.area || ''} disabled className="kiosk-input bg-secondary/30" />
         </div>
         <div>
           <label className="kiosk-label">HORA DE REGISTRO</label>
-          <input
-            type="text"
-            value={horaActual}
-            disabled
-            className="kiosk-input bg-secondary/30"
-          />
+          <input type="text" value={horaActual} disabled className="kiosk-input bg-secondary/30" />
         </div>
       </div>
 
@@ -209,11 +171,7 @@ export function RegistroHoras({
 
       {/* Main action */}
       <div>
-        <button
-          onClick={() => handleRegistro('ENTRADA')}
-          disabled={!empleadoEncontrado}
-          className="kiosk-btn-primary w-full sm:w-auto flex items-center justify-center gap-2 disabled:opacity-50"
-        >
+        <button onClick={() => handleRegistro('ENTRADA')} disabled={!empleadoEncontrado} className="kiosk-btn-primary w-full sm:w-auto flex items-center justify-center gap-2 disabled:opacity-50">
           <ArrowRightCircle className="w-5 h-5" />
           REGISTRADOR DE ENTRADA
         </button>
@@ -222,8 +180,7 @@ export function RegistroHoras({
       <div className="h-px bg-border" />
 
       {/* Table */}
-      {empleadosConRegistros.length > 0 ? (
-        <div className="overflow-x-auto rounded-lg border border-border">
+      {empleadosConRegistros.length > 0 ? <div className="overflow-x-auto rounded-lg border border-border">
           <table className="kiosk-table">
             <thead>
               <tr>
@@ -236,68 +193,48 @@ export function RegistroHoras({
             </thead>
             <tbody>
               {empleadosConRegistros.map(empleado => {
-                const registrosEmpleado = getRegistrosPorEmpleado(empleado.id);
-                const puedeGenerarSalida = registrosEmpleado[0]?.tipo === 'ENTRADA';
-                return (
-                  <tr key={empleado.id}>
+            const registrosEmpleado = getRegistrosPorEmpleado(empleado.id);
+            const puedeGenerarSalida = registrosEmpleado[0]?.tipo === 'ENTRADA';
+            return <tr key={empleado.id}>
                     <td className="font-semibold">{empleado.nombre}</td>
                     <td>{empleado.cedula}</td>
                     <td>{empleado.area}</td>
                     <td>
                       <div className="space-y-1 text-sm">
-                        {registrosEmpleado.slice(0, 3).map(r => (
-                          <div key={r.id}>
+                        {registrosEmpleado.slice(0, 3).map(r => <div key={r.id}>
                             <span className={r.tipo === 'ENTRADA' ? 'kiosk-badge-entry' : 'kiosk-badge-exit'}>
                               {r.tipo}:
                             </span>{' '}
                             {r.fecha}, {r.hora}
-                          </div>
-                        ))}
-                        {registrosEmpleado.length > 3 && (
-                          <div className="text-muted-foreground">
+                          </div>)}
+                        {registrosEmpleado.length > 3 && <div className="text-muted-foreground">
                             +{registrosEmpleado.length - 3} más
-                          </div>
-                        )}
+                          </div>}
                       </div>
                     </td>
                     <td>
-                      <button
-                        onClick={() => handleSalidaDirecta(empleado)}
-                        disabled={!puedeGenerarSalida}
-                        className="kiosk-btn-accent text-sm py-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
+                      <button onClick={() => handleSalidaDirecta(empleado)} disabled={!puedeGenerarSalida} className="kiosk-btn-accent text-sm py-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed">
                         <ArrowLeftCircle className="w-4 h-4 inline mr-1" />
                         GENERAR SALIDA
                       </button>
                     </td>
-                  </tr>
-                );
-              })}
+                  </tr>;
+          })}
             </tbody>
           </table>
-        </div>
-      ) : (
-        <div className="kiosk-empty">No hay registros para mostrar</div>
-      )}
+        </div> : <div className="kiosk-empty">No hay registros para mostrar</div>}
 
       {/* Export Buttons */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <button
-          onClick={handleExport}
-          className="kiosk-btn-accent flex items-center justify-center gap-2"
-        >
+        <button onClick={handleExport} className="kiosk-btn-accent flex items-center justify-center gap-2 rounded-3xl shadow-none opacity-90 text-primary-foreground bg-green-700 hover:bg-green-600">
           <FileSpreadsheet className="w-5 h-5" />
           GENERAR EXCEL
         </button>
         <AdminDashboard tiendaId={tiendaId} tiendaNombre={tiendaNombre} />
-        <button
-          onClick={() => {}}
-          className="kiosk-btn-success flex items-center justify-center gap-2"
-        >
+        <button onClick={() => {}} className="kiosk-btn-success rounded-3xl shadow-none opacity-90 bg-accent flex-row flex items-center justify-center gap-[2px] font-sans">
           <User className="w-5 h-5" />
           MOSTRAR TODOS LOS REGISTROS ({registros.length})
         </button>
       </div>
-    </div>
-  );
+    </div>;
 }
