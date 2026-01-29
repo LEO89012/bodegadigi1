@@ -22,8 +22,8 @@ export function AdminDashboard({
   const empleadosFuera = empleadosEstado.filter(e => e.estado === 'FUERA');
   return <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <button className="kiosk-btn-primary bg-sky-900 hover:bg-sky-800 flex items-center justify-center text-center shadow-none rounded-3xl opacity-90 border-4 border-none border-[#9797f2]/[0.83] gap-[19px]">
-          <Eye className="w-5 h-5" />
+        <button className="flex-1 py-2.5 px-4 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+          <Eye className="w-4 h-4" />
           VISUALIZACIÓN ADMIN
         </button>
       </DialogTrigger>

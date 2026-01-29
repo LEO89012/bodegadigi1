@@ -280,22 +280,22 @@ export function RegistroHoras({
         <div className="kiosk-empty">No hay registros para mostrar</div>
       )}
 
-      {/* Export Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Action Buttons - Unified size */}
+      <div className="flex flex-col sm:flex-row gap-2">
         <button
           onClick={handleExport}
-          className="kiosk-btn-accent flex items-center justify-center gap-2"
+          className="flex-1 py-2.5 px-4 bg-accent text-accent-foreground font-semibold text-sm rounded-lg hover:bg-accent/90 transition-all flex items-center justify-center gap-2"
         >
-          <FileSpreadsheet className="w-5 h-5" />
+          <FileSpreadsheet className="w-4 h-4" />
           GENERAR EXCEL
         </button>
         <AdminDashboard tiendaId={tiendaId} tiendaNombre={tiendaNombre} />
         <button
           onClick={() => {}}
-          className="kiosk-btn-success flex items-center justify-center gap-2"
+          className="flex-1 py-2.5 px-4 bg-success text-success-foreground font-semibold text-sm rounded-lg hover:bg-success/90 transition-all flex items-center justify-center gap-2"
         >
-          <User className="w-5 h-5" />
-          MOSTRAR TODOS LOS REGISTROS ({registros.length})
+          <User className="w-4 h-4" />
+          TODOS LOS REGISTROS ({registros.length})
         </button>
       </div>
     </div>
