@@ -22,7 +22,7 @@ export type Database = {
           id: number
           is_global: boolean
           nombre: string
-          tienda_id: string
+          tienda_id: string | null
         }
         Insert: {
           area: string
@@ -31,7 +31,7 @@ export type Database = {
           id?: number
           is_global?: boolean
           nombre: string
-          tienda_id: string
+          tienda_id?: string | null
         }
         Update: {
           area?: string
@@ -40,7 +40,7 @@ export type Database = {
           id?: number
           is_global?: boolean
           nombre?: string
-          tienda_id?: string
+          tienda_id?: string | null
         }
         Relationships: [
           {

@@ -6,7 +6,7 @@ export interface Tienda {
 
 export interface Empleado {
   id: number;
-  tienda_id: string;
+  tienda_id: string | null;
   cedula: string;
   nombre: string;
   area: string;
