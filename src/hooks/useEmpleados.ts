@@ -10,10 +10,11 @@ export function useEmpleados(tiendaId: string | undefined) {
     if (!tiendaId) return;
     
     setLoading(true);
+    // Obtener empleados de la tienda + empleados globales del sistema
     const { data, error } = await supabase
       .from('empleados')
       .select('*')
-      .eq('tienda_id', tiendaId)
+      .or(`tienda_id.eq.${tiendaId},and(is_global.eq.true,tienda_id.is.null)`)
       .order('nombre');
 
     if (!error && data) {
@@ -33,15 +34,28 @@ export function useEmpleados(tiendaId: string | undefined) {
     const globalRoles = ['ADMINISTRACIÓN', 'SISTEMAS', 'EXTERNO', 'SUPERVISOR', 'MANTENIMIENTO'];
     const isGlobal = globalRoles.includes(area.toUpperCase());
 
+    // Empleados globales no tienen tienda_id (son del sistema)
+    const insertData: {
+      cedula: string;
+      nombre: string;
+      area: string;
+      is_global: boolean;
+      tienda_id?: string;
+    } = {
+      cedula,
+      nombre: nombre.toUpperCase(),
+      area,
+      is_global: isGlobal,
+    };
+
+    // Solo asignar tienda_id si NO es global
+    if (!isGlobal) {
+      insertData.tienda_id = tiendaId;
+    }
+
     const { data, error } = await supabase
       .from('empleados')
-      .insert({
-        tienda_id: tiendaId,
-        cedula,
-        nombre: nombre.toUpperCase(),
-        area,
-        is_global: isGlobal,
-      })
+      .insert(insertData)
       .select()
       .single();
 
