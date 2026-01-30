@@ -1,16 +1,23 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Users, Clock, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Users, Clock, RefreshCw, Lock } from 'lucide-react';
 import { useAdminRegistros, EmpleadoEstado } from '@/hooks/useAdminRegistros';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+
 interface AdminDashboardProps {
   tiendaId: string;
   tiendaNombre: string;
 }
+
 export function AdminDashboard({
   tiendaId,
   tiendaNombre
 }: AdminDashboardProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [password, setPassword] = useState('');
+  const { toast } = useToast();
+  
   const {
     registros,
     loading,
@@ -20,13 +27,78 @@ export function AdminDashboard({
   const empleadosEstado = getEmpleadosEstado();
   const empleadosDentro = empleadosEstado.filter(e => e.estado === 'DENTRO');
   const empleadosFuera = empleadosEstado.filter(e => e.estado === 'FUERA');
-  return <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <button className="flex-1 py-2.5 px-4 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
-          <Eye className="w-4 h-4" />
-          VISUALIZACIÓN ADMIN
-        </button>
-      </DialogTrigger>
+
+  const handleAdminClick = () => {
+    setShowPasswordDialog(true);
+    setPassword('');
+  };
+
+  const handlePasswordSubmit = () => {
+    if (password === 'admin') {
+      setShowPasswordDialog(false);
+      setIsOpen(true);
+      setPassword('');
+    } else {
+      toast({
+        title: 'Acceso denegado',
+        description: 'Contraseña incorrecta',
+        variant: 'destructive',
+      });
+      setPassword('');
+    }
+  };
+
+  const handlePasswordKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handlePasswordSubmit();
+    }
+  };
+
+  return (
+    <>
+      {/* Password Dialog */}
+      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="w-5 h-5 text-primary" />
+              Acceso Administrador
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="kiosk-label">CONTRASEÑA</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handlePasswordKeyDown}
+                placeholder="Ingrese contraseña"
+                className="kiosk-input"
+                autoFocus
+              />
+            </div>
+            <button
+              onClick={handlePasswordSubmit}
+              className="w-full kiosk-btn-primary"
+            >
+              INGRESAR
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Admin Button */}
+      <button
+        onClick={handleAdminClick}
+        className="flex-1 py-2.5 px-4 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
+      >
+        <Eye className="w-4 h-4" />
+        VISUALIZACIÓN ADMIN
+      </button>
+
+      {/* Admin Dashboard Dialog */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-xl">
@@ -163,7 +235,9 @@ export function AdminDashboard({
           </div>
         </div>
       </DialogContent>
-    </Dialog>;
+    </Dialog>
+    </>
+  );
 }
 function EmpleadoRow({
   empleado
