@@ -81,7 +81,7 @@ export function LoginScreen({
         </div>
 
         {/* Card */}
-        <div className="kiosk-card p-8">
+        <div className="kiosk-card p-8 py-[35px] my-0 mx-0 px-[35px] pb-[35px] border-4 border-secondary border-solid rounded-3xl shadow-2xl opacity-100">
           <div className="text-center mb-6">
             <h2 className="text-xl font-bold text-primary mb-1">Acceso al Sistema</h2>
             <p className="text-sm text-muted-foreground">Ingrese sus credenciales para continuar</p>
