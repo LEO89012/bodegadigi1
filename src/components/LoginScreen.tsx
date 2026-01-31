@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ShoppingCart, Building2, Lock } from 'lucide-react';
+import { Building2, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import ktronixLogo from '@/assets/ktronix-alkosto.png';
 
 interface LoginScreenProps {
   onLogin: (nombre: string, password: string) => Promise<unknown>;
@@ -77,12 +78,15 @@ export function LoginScreen({ onLogin, onRegister }: LoginScreenProps) {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <ShoppingCart className="w-10 h-10 text-primary" />
+          <div className="flex flex-col items-center gap-4">
+            <img 
+              src={ktronixLogo} 
+              alt="Ktronix Alkosto" 
+              className="h-12 w-auto object-contain"
+            />
             <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
-            <ShoppingCart className="w-10 h-10 text-primary" />
+            <p className="text-muted-foreground">Sistema de Registro de Horas</p>
           </div>
-          <p className="text-muted-foreground">Sistema de Registro de Horas</p>
         </div>
 
         {/* Card */}
