@@ -76,7 +76,7 @@ export function LoginScreen({
           <div className="flex flex-col items-center gap-4">
             <img src={ktronixLogo} alt="Ktronix Alkosto" className="h-12 w-auto object-contain rounded-2xl" />
             <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
-            <p className="text-muted-foreground">Sistema de Registro de Horas</p>
+            
           </div>
         </div>
 
