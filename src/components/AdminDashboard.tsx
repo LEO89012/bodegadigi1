@@ -112,7 +112,10 @@ export function AdminDashboard({
         <div className="flex-1 overflow-auto space-y-4 py-4">
           {/* Stats */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl p-4 shadow-md border border-green-200 flex items-center gap-4">
+            <div 
+              className="bg-white rounded-xl p-4 shadow-md border border-green-200 flex items-center gap-4 animate-fade-in-up"
+              style={{ animationDelay: '0ms' }}
+            >
               <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
                 <Users className="w-7 h-7 text-green-600" />
               </div>
@@ -121,7 +124,10 @@ export function AdminDashboard({
                 <p className="text-sm text-gray-600 font-medium">Dentro de Bodega</p>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-4 shadow-md border border-orange-200 flex items-center gap-4">
+            <div 
+              className="bg-white rounded-xl p-4 shadow-md border border-orange-200 flex items-center gap-4 animate-fade-in-up"
+              style={{ animationDelay: '100ms' }}
+            >
               <div className="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center">
                 <EyeOff className="w-7 h-7 text-orange-600" />
               </div>
@@ -141,7 +147,10 @@ export function AdminDashboard({
           </div>
 
           {/* Employees Inside Table */}
-          <div className="bg-white rounded-xl p-4 shadow-md border border-green-200">
+          <div 
+            className="bg-white rounded-xl p-4 shadow-md border border-green-200 animate-fade-in-up"
+            style={{ animationDelay: '200ms' }}
+          >
             <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
               EMPLEADOS DENTRO DE BODEGA ({empleadosDentro.length})
@@ -171,7 +180,10 @@ export function AdminDashboard({
           </div>
 
           {/* Employees Outside Table */}
-          <div className="bg-white rounded-xl p-4 shadow-md border border-orange-200">
+          <div 
+            className="bg-white rounded-xl p-4 shadow-md border border-orange-200 animate-fade-in-up"
+            style={{ animationDelay: '300ms' }}
+          >
             <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-orange-500"></div>
               EMPLEADOS FUERA DE BODEGA ({empleadosFuera.length})
@@ -201,7 +213,10 @@ export function AdminDashboard({
           </div>
 
           {/* All Registros History */}
-          <div className="bg-white rounded-xl p-4 shadow-md border border-blue-200">
+          <div 
+            className="bg-white rounded-xl p-4 shadow-md border border-blue-200 animate-fade-in-up"
+            style={{ animationDelay: '400ms' }}
+          >
             <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
               <Clock className="w-4 h-4 text-blue-600" />
               HISTORIAL DE REGISTROS DEL DÍA ({registros.length})
@@ -241,7 +256,10 @@ export function AdminDashboard({
           </div>
 
           {/* Info Note */}
-          <div className="text-xs text-blue-700 bg-blue-50 p-4 rounded-xl border border-blue-200">
+          <div 
+            className="text-xs text-blue-700 bg-blue-50 p-4 rounded-xl border border-blue-200 animate-fade-in-up"
+            style={{ animationDelay: '500ms' }}
+          >
             <p className="font-medium">ℹ️ Esta vista muestra registros en tiempo real que NO se borran al exportar Excel.</p>
             <p className="mt-1">Los registros se limpian automáticamente a las 11:00 PM cada día.</p>
           </div>
