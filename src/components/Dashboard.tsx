@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ShoppingCart, LogOut } from 'lucide-react';
 import { RegistroHoras } from './RegistroHoras';
 import { RegistroEmpleados } from './RegistroEmpleados';
 import { AdminDashboard } from './AdminDashboard';
 import type { Tienda, Empleado, RegistroHora } from '@/types';
 import ktronixAlkostoLogo from '@/assets/ktronix-alkosto.png';
+import alkostoLogo from '@/assets/alkosto-logo.png';
 interface DashboardProps {
   tienda: Tienda;
   empleados: Empleado[];
@@ -33,6 +34,17 @@ export function Dashboard({
   getRegistrosPorEmpleado
 }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<'horas' | 'empleados'>('horas');
+  const [currentLogoIndex, setCurrentLogoIndex] = useState(0);
+
+  const logos = [ktronixAlkostoLogo, alkostoLogo];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentLogoIndex((prev) => (prev + 1) % logos.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return <div className="min-h-screen p-4">
       <div className="max-w-6xl mx-auto">
         {/* Card */}
@@ -41,7 +53,14 @@ export function Dashboard({
           <div className="flex items-start justify-between gap-4 mb-5">
             <div className="flex-1">
               <div className="flex justify-center mb-3">
-                <img src={ktronixAlkostoLogo} alt="Logo Ktronix Alkosto" loading="lazy" className="h-16 sm:h-20 w-auto object-contain border-dotted shadow-xl rounded-2xl" />
+                <div className="h-16 sm:h-20 flex items-center justify-center">
+                  <img 
+                    src={logos[currentLogoIndex]} 
+                    alt="Logo" 
+                    loading="lazy" 
+                    className="h-16 sm:h-20 w-auto object-contain shadow-xl rounded-2xl transition-opacity duration-500" 
+                  />
+                </div>
               </div>
               <div className="flex items-center justify-center gap-3 text-primary">
                 <ShoppingCart className="w-6 h-6" />
