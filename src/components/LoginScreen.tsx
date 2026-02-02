@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Building2, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ktronixLogo from '@/assets/ktronix-alkosto.png';
+import alkostoLogo from '@/assets/alkosto-logo.png';
 interface LoginScreenProps {
   onLogin: (nombre: string, password: string) => Promise<unknown>;
   onRegister: (nombre: string, password: string) => Promise<unknown>;
@@ -14,9 +15,19 @@ export function LoginScreen({
   const [nombreTienda, setNombreTienda] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [currentLogoIndex, setCurrentLogoIndex] = useState(0);
   const {
     toast
   } = useToast();
+
+  const logos = [ktronixLogo, alkostoLogo];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentLogoIndex((prev) => (prev + 1) % logos.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nombreTienda.trim() || !password.trim()) {
@@ -74,9 +85,14 @@ export function LoginScreen({
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex flex-col items-center gap-4">
-            <img src={ktronixLogo} alt="Ktronix Alkosto" className="h-12 w-auto object-contain rounded-2xl" />
+            <div className="h-14 flex items-center justify-center">
+              <img 
+                src={logos[currentLogoIndex]} 
+                alt="Logo" 
+                className="h-14 w-auto object-contain rounded-xl transition-opacity duration-500" 
+              />
+            </div>
             <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
-            
           </div>
         </div>
 
