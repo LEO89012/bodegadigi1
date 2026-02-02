@@ -50,17 +50,29 @@ export function Dashboard({
         {/* Card */}
         <div className="kiosk-card p-6">
           {/* Header */}
-          <div className="flex items-start justify-between gap-4 mb-5">
-            <div className="flex-1">
-              <div className="flex justify-center mb-3">
-                <div className="h-16 sm:h-20 flex items-center justify-center">
+          <div className="relative mb-5">
+            {/* Logout button - absolute positioned */}
+            <button onClick={onLogout} className="absolute top-0 right-0 flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-primary transition-colors">
+              <LogOut className="w-5 h-5" />
+              <span className="hidden sm:inline">{tienda.nombre}</span>
+            </button>
+
+            {/* Centered content */}
+            <div className="flex flex-col items-center">
+              <div className="h-16 sm:h-20 flex items-center justify-center mb-3 relative">
+                {logos.map((logo, index) => (
                   <img 
-                    src={logos[currentLogoIndex]} 
+                    key={index}
+                    src={logo} 
                     alt="Logo" 
                     loading="lazy" 
-                    className="h-16 sm:h-20 w-auto object-contain shadow-xl rounded-2xl transition-opacity duration-500" 
+                    className={`h-16 sm:h-20 w-auto object-contain shadow-xl rounded-2xl absolute transition-all duration-700 ease-in-out ${
+                      index === currentLogoIndex 
+                        ? 'opacity-100 scale-100' 
+                        : 'opacity-0 scale-95'
+                    }`} 
                   />
-                </div>
+                ))}
               </div>
               <div className="flex items-center justify-center gap-3 text-primary">
                 <ShoppingCart className="w-6 h-6" />
@@ -70,11 +82,6 @@ export function Dashboard({
                 <ShoppingCart className="w-6 h-6" />
               </div>
             </div>
-
-            <button onClick={onLogout} className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-primary transition-colors">
-              <LogOut className="w-5 h-5" />
-              <span className="hidden sm:inline">{tienda.nombre}</span>
-            </button>
           </div>
 
           {/* Tabs */}

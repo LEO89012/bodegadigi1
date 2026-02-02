@@ -85,12 +85,19 @@ export function LoginScreen({
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex flex-col items-center gap-4">
-            <div className="h-14 flex items-center justify-center">
-              <img 
-                src={logos[currentLogoIndex]} 
-                alt="Logo" 
-                className="h-14 w-auto object-contain rounded-xl transition-opacity duration-500" 
-              />
+            <div className="h-14 flex items-center justify-center relative">
+              {logos.map((logo, index) => (
+                <img 
+                  key={index}
+                  src={logo} 
+                  alt="Logo" 
+                  className={`h-14 w-auto object-contain rounded-xl absolute transition-all duration-700 ease-in-out ${
+                    index === currentLogoIndex 
+                      ? 'opacity-100 scale-100' 
+                      : 'opacity-0 scale-95'
+                  }`} 
+                />
+              ))}
             </div>
             <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
           </div>
