@@ -85,17 +85,17 @@ export function LoginScreen({
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex flex-col items-center gap-4">
-            <div className="h-14 flex items-center justify-center relative">
+            <div className="h-14 w-40 flex items-center justify-center relative">
               {logos.map((logo, index) => (
                 <img 
                   key={index}
                   src={logo} 
                   alt="Logo" 
-                  className={`h-14 w-auto object-contain rounded-xl absolute transition-all duration-700 ease-in-out ${
-                    index === currentLogoIndex 
-                      ? 'opacity-100 scale-100' 
-                      : 'opacity-0 scale-95'
-                  }`} 
+                  style={{
+                    opacity: index === currentLogoIndex ? 1 : 0,
+                    transform: index === currentLogoIndex ? 'scale(1)' : 'scale(0.95)',
+                  }}
+                  className="h-14 w-auto object-contain rounded-xl absolute transition-all duration-700 ease-in-out" 
                 />
               ))}
             </div>

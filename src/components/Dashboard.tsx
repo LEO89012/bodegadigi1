@@ -59,18 +59,18 @@ export function Dashboard({
 
             {/* Centered content */}
             <div className="flex flex-col items-center">
-              <div className="h-16 sm:h-20 flex items-center justify-center mb-3 relative">
+              <div className="h-16 sm:h-20 w-48 sm:w-56 flex items-center justify-center mb-3 relative">
                 {logos.map((logo, index) => (
                   <img 
                     key={index}
                     src={logo} 
                     alt="Logo" 
                     loading="lazy" 
-                    className={`h-16 sm:h-20 w-auto object-contain shadow-xl rounded-2xl absolute transition-all duration-700 ease-in-out ${
-                      index === currentLogoIndex 
-                        ? 'opacity-100 scale-100' 
-                        : 'opacity-0 scale-95'
-                    }`} 
+                    style={{
+                      opacity: index === currentLogoIndex ? 1 : 0,
+                      transform: index === currentLogoIndex ? 'scale(1)' : 'scale(0.95)',
+                    }}
+                    className="h-16 sm:h-20 w-auto object-contain shadow-xl rounded-2xl absolute transition-all duration-700 ease-in-out" 
                   />
                 ))}
               </div>
