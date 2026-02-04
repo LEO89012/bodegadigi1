@@ -67,6 +67,28 @@ export function RegistroHoras({
       return;
     }
 
+    // Validar que no haya duplicados
+    const registrosEmpleado = getRegistrosPorEmpleado(empleadoEncontrado.id);
+    const ultimoRegistro = registrosEmpleado[0];
+
+    if (tipo === 'ENTRADA' && ultimoRegistro?.tipo === 'ENTRADA') {
+      toast({
+        title: 'Entrada duplicada',
+        description: `${empleadoEncontrado.nombre} ya tiene una ENTRADA registrada. Debe registrar SALIDA primero.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (tipo === 'SALIDA' && (!ultimoRegistro || ultimoRegistro.tipo === 'SALIDA')) {
+      toast({
+        title: 'Salida no permitida',
+        description: `${empleadoEncontrado.nombre} no tiene una ENTRADA activa. Debe registrar ENTRADA primero.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const objetosTexto = objetosPersonales.length ? objetosPersonales.join(', ') : '';
 
     const registro = await onAddRegistro(empleadoEncontrado, tipo, {
