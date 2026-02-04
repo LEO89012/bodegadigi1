@@ -35,6 +35,7 @@ export function RegistroHoras({
   const [empleadoEncontrado, setEmpleadoEncontrado] = useState<Empleado | null>(null);
   const [objetosPersonales, setObjetosPersonales] = useState<string[]>(['NO INGRESA NADA']);
   const [tareas, setTareas] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const now = new Date();
@@ -58,6 +59,8 @@ export function RegistroHoras({
   };
 
   const handleRegistro = async (tipo: 'ENTRADA' | 'SALIDA') => {
+    if (isSubmitting) return; // Prevenir clicks múltiples
+    
     if (!empleadoEncontrado) {
       toast({
         title: 'Error',
@@ -66,6 +69,8 @@ export function RegistroHoras({
       });
       return;
     }
+    
+    setIsSubmitting(true);
 
     // Validar que no haya duplicados
     const registrosEmpleado = getRegistrosPorEmpleado(empleadoEncontrado.id);
@@ -91,29 +96,37 @@ export function RegistroHoras({
 
     const objetosTexto = objetosPersonales.length ? objetosPersonales.join(', ') : '';
 
-    const registro = await onAddRegistro(empleadoEncontrado, tipo, {
-      objetosPersonales: objetosTexto,
-      tareas,
-    });
-    
-    if (registro) {
-      toast({
-        title: `${tipo} registrada`,
-        description: `${empleadoEncontrado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
+    try {
+      const registro = await onAddRegistro(empleadoEncontrado, tipo, {
+        objetosPersonales: objetosTexto,
+        tareas,
       });
+      
+      if (registro) {
+        toast({
+          title: `${tipo} registrada`,
+          description: `${empleadoEncontrado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
+        });
+      }
+      setCedula('');
+      setEmpleadoEncontrado(null);
+      setObjetosPersonales(['NO INGRESA NADA']);
+      setTareas([]);
+    } finally {
+      setIsSubmitting(false);
     }
-    setCedula('');
-    setEmpleadoEncontrado(null);
-    setObjetosPersonales(['NO INGRESA NADA']);
-    setTareas([]);
   };
 
   const handleSalidaDirecta = async (empleado: Empleado) => {
+    if (isSubmitting) return; // Prevenir clicks múltiples
+    
+    setIsSubmitting(true);
     const registrosEmpleado = getRegistrosPorEmpleado(empleado.id);
     const ultimo = registrosEmpleado[0];
 
     // Solo permitir SALIDA si el último registro fue ENTRADA
     if (!ultimo || ultimo.tipo !== 'ENTRADA') {
+      setIsSubmitting(false);
       toast({
         title: 'Salida no permitida',
         description: 'Debe registrar una nueva ENTRADA antes de generar otra SALIDA.',
@@ -121,27 +134,32 @@ export function RegistroHoras({
       });
       return;
     }
+    
+    try {
 
     // En SALIDA, conservar los objetos personales de la última ENTRADA
     const ultimaEntrada = registrosEmpleado.find((r) => r.tipo === 'ENTRADA');
     const objetosTextoActual = objetosPersonales.length ? objetosPersonales.join(', ') : '';
     const objetosParaSalida = ultimaEntrada?.objetosPersonales || objetosTextoActual;
 
-    const registro = await onAddRegistro(empleado, 'SALIDA', {
-      objetosPersonales: objetosParaSalida,
-      tareas,
-    });
-    
-    if (registro) {
-      toast({
-        title: 'SALIDA registrada',
-        description: `${empleado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
+      const registro = await onAddRegistro(empleado, 'SALIDA', {
+        objetosPersonales: objetosParaSalida,
+        tareas,
       });
+      
+      if (registro) {
+        toast({
+          title: 'SALIDA registrada',
+          description: `${empleado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
+        });
+      }
+      setCedula('');
+      setEmpleadoEncontrado(null);
+      setObjetosPersonales(['NO INGRESA NADA']);
+      setTareas([]);
+    } finally {
+      setIsSubmitting(false);
     }
-    setCedula('');
-    setEmpleadoEncontrado(null);
-    setObjetosPersonales(['NO INGRESA NADA']);
-    setTareas([]);
   };
 
   const handleExport = async () => {
@@ -233,10 +251,14 @@ export function RegistroHoras({
       <div>
         <button
           onClick={() => handleRegistro('ENTRADA')}
-          disabled={!empleadoEncontrado}
-          className="kiosk-btn-primary w-full sm:w-auto flex items-center justify-center gap-2 disabled:opacity-50"
+          disabled={!empleadoEncontrado || isSubmitting}
+          className="kiosk-btn-primary w-full sm:w-auto flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <ArrowRightCircle className="w-5 h-5" />
+          {isSubmitting ? (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <ArrowRightCircle className="w-5 h-5" />
+          )}
           REGISTRADOR DE ENTRADA
         </button>
       </div>
@@ -285,10 +307,14 @@ export function RegistroHoras({
                     <td>
                       <button
                         onClick={() => handleSalidaDirecta(empleado)}
-                        disabled={!puedeGenerarSalida}
+                        disabled={!puedeGenerarSalida || isSubmitting}
                         className="kiosk-btn-accent text-sm py-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <ArrowLeftCircle className="w-4 h-4 inline mr-1" />
+                        {isSubmitting ? (
+                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin inline mr-1" />
+                        ) : (
+                          <ArrowLeftCircle className="w-4 h-4 inline mr-1" />
+                        )}
                         GENERAR SALIDA
                       </button>
                     </td>
