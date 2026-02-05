@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Building2, Lock, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import alkostoKtronixLogo from '@/assets/alkosto-ktronix-logo.png';
+import alkostoKtronixLogo from '@/assets/alkosto-ktronix-logo-transparent.png';
 
 interface LoginScreenProps {
   onLogin: (nombre: string, password: string) => Promise<unknown>;
