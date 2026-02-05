@@ -79,7 +79,7 @@ export function LoginScreen({
           <img 
             src={alkostoKtronixLogo} 
             alt="Alkosto Ktronix Logo" 
-            className="h-24 w-24 object-contain rounded-full border-4 border-white shadow-lg" 
+            className="h-32 w-32 object-contain drop-shadow-xl" 
           />
         </div>
 
