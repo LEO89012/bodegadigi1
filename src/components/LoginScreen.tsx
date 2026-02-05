@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Building2, Lock, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import ktronixLogo from '@/assets/ktronix-alkosto.png';
-import alkostoLogo from '@/assets/alkosto-logo.png';
+import alkostoKtronixLogo from '@/assets/alkosto-ktronix-logo.png';
 
 interface LoginScreenProps {
   onLogin: (nombre: string, password: string) => Promise<unknown>;
@@ -17,17 +16,7 @@ export function LoginScreen({
   const [nombreTienda, setNombreTienda] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [currentLogoIndex, setCurrentLogoIndex] = useState(0);
   const { toast } = useToast();
-
-  const logos = [ktronixLogo, alkostoLogo];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentLogoIndex((prev) => (prev + 1) % logos.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,20 +76,11 @@ export function LoginScreen({
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-4">
-          <div className="h-20 w-20 flex items-center justify-center relative">
-            {logos.map((logo, index) => (
-              <img 
-                key={index}
-                src={logo} 
-                alt="Logo" 
-                style={{
-                  opacity: index === currentLogoIndex ? 1 : 0,
-                  transform: index === currentLogoIndex ? 'scale(1)' : 'scale(0.95)',
-                }}
-                className="h-20 w-auto object-contain rounded-full border-4 border-white shadow-lg absolute transition-all duration-700 ease-in-out" 
-              />
-            ))}
-          </div>
+          <img 
+            src={alkostoKtronixLogo} 
+            alt="Alkosto Ktronix Logo" 
+            className="h-24 w-24 object-contain rounded-full border-4 border-white shadow-lg" 
+          />
         </div>
 
         {/* Title with phone icons */}
