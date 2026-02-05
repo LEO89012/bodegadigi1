@@ -38,10 +38,10 @@ export function LoginScreen({
       });
       return;
     }
-    if (password.length < 6) {
+    if (password.length < 4) {
       toast({
         title: 'Error',
-        description: 'La contraseña debe tener al menos 6 caracteres',
+        description: 'La contraseña debe tener al menos 4 caracteres',
         variant: 'destructive'
       });
       return;
