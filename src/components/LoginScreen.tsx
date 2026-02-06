@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Building2, Lock } from 'lucide-react';
+import { Building2, Lock, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ktronixLogo from '@/assets/ktronix-alkosto.png';
 import alkostoLogo from '@/assets/alkosto-logo.png';
@@ -99,7 +99,11 @@ export function LoginScreen({
                 />
               ))}
             </div>
-            <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
+            <div className="flex items-center justify-center gap-3">
+              <Smartphone className="w-7 h-7 text-primary" />
+              <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
+              <Smartphone className="w-7 h-7 text-primary" />
+            </div>
           </div>
         </div>
 
