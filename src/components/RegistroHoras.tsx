@@ -70,9 +70,7 @@ export function RegistroHoras({
       return;
     }
     
-    setIsSubmitting(true);
-
-    // Validar que no haya duplicados
+    // Validar que no haya duplicados ANTES de bloquear
     const registrosEmpleado = getRegistrosPorEmpleado(empleadoEncontrado.id);
     const ultimoRegistro = registrosEmpleado[0];
 
@@ -93,6 +91,8 @@ export function RegistroHoras({
       });
       return;
     }
+
+    setIsSubmitting(true);
 
     const objetosTexto = objetosPersonales.length ? objetosPersonales.join(', ') : '';
 

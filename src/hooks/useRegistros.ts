@@ -166,7 +166,14 @@ export function useRegistros(tiendaId?: string) {
   const exportToExcel = useCallback(async () => {
     if (registros.length === 0) return false;
 
-    const data = registros.map(r => ({
+    // Organizar por empleado (nombre) y luego por timestamp
+    const sorted = [...registros].sort((a, b) => {
+      const nameCompare = a.nombre.localeCompare(b.nombre);
+      if (nameCompare !== 0) return nameCompare;
+      return a.timestamp.getTime() - b.timestamp.getTime();
+    });
+
+    const data = sorted.map(r => ({
       'CÉDULA': r.cedula,
       'NOMBRE': r.nombre,
       'ÁREA': r.area,
