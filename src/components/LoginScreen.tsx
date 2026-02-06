@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Building2, Lock } from 'lucide-react';
+import { Building2, Lock, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ktronixLogo from '@/assets/ktronix-alkosto.png';
 import alkostoLogo from '@/assets/alkosto-logo.png';
@@ -19,10 +19,12 @@ export function LoginScreen({
   const {
     toast
   } = useToast();
+
   const logos = [ktronixLogo, alkostoLogo];
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentLogoIndex(prev => (prev + 1) % logos.length);
+      setCurrentLogoIndex((prev) => (prev + 1) % logos.length);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
@@ -79,17 +81,29 @@ export function LoginScreen({
     }
   };
   return <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-primary">
+      <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex flex-col items-center gap-4">
             <div className="h-14 w-40 flex items-center justify-center relative">
-              {logos.map((logo, index) => <img key={index} src={logo} alt="Logo" style={{
-              opacity: index === currentLogoIndex ? 1 : 0,
-              transform: index === currentLogoIndex ? 'scale(1)' : 'scale(0.95)'
-            }} className="h-14 w-auto object-contain rounded-xl absolute transition-all duration-700 ease-in-out" />)}
+              {logos.map((logo, index) => (
+                <img 
+                  key={index}
+                  src={logo} 
+                  alt="Logo" 
+                  style={{
+                    opacity: index === currentLogoIndex ? 1 : 0,
+                    transform: index === currentLogoIndex ? 'scale(1)' : 'scale(0.95)',
+                  }}
+                  className="h-14 w-auto object-contain rounded-xl absolute transition-all duration-700 ease-in-out" 
+                />
+              ))}
             </div>
-            <h1 className="text-3xl font-bold text-primary my-0 border-0 rounded-xl shadow-xl">BODEGA DIGITAL</h1>
+            <div className="flex items-center justify-center gap-3">
+              <Smartphone className="w-7 h-7 text-primary" />
+              <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
+              <Smartphone className="w-7 h-7 text-primary" />
+            </div>
           </div>
         </div>
 
