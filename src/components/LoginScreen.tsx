@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Building2, Lock, Smartphone } from 'lucide-react';
+import { Building2, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ktronixLogo from '@/assets/ktronix-alkosto.png';
 import alkostoLogo from '@/assets/alkosto-logo.png';
+import celularIcon from '@/assets/celular-icon.png';
 interface LoginScreenProps {
   onLogin: (nombre: string, password: string) => Promise<unknown>;
   onRegister: (nombre: string, password: string) => Promise<unknown>;
@@ -100,9 +101,9 @@ export function LoginScreen({
               ))}
             </div>
             <div className="flex items-center justify-center gap-3">
-              <Smartphone className="w-7 h-7 text-primary" />
+              <img src={celularIcon} alt="Celular" className="w-8 h-10 object-contain" />
               <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
-              <Smartphone className="w-7 h-7 text-primary" />
+              <img src={celularIcon} alt="Celular" className="w-8 h-10 object-contain" />
             </div>
           </div>
         </div>
