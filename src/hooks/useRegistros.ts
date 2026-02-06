@@ -112,6 +112,10 @@ export function useRegistros(tiendaId?: string) {
 
     if (error) {
       console.error('Error adding registro:', error);
+      // If it's a duplicate trigger error, throw so the UI can show a message
+      if (error.message?.includes('Registro duplicado')) {
+        throw new Error(`Registro duplicado de ${tipo} para este empleado`);
+      }
       return null;
     }
 

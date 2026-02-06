@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Clock, User, FileSpreadsheet, ArrowRightCircle, ArrowLeftCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Empleado, RegistroHora } from '@/types';
@@ -36,6 +36,7 @@ export function RegistroHoras({
   const [objetosPersonales, setObjetosPersonales] = useState<string[]>(['NO INGRESA NADA']);
   const [tareas, setTareas] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittingRef = useRef(false);
   const { toast } = useToast();
 
   const now = new Date();
@@ -59,7 +60,7 @@ export function RegistroHoras({
   };
 
   const handleRegistro = async (tipo: 'ENTRADA' | 'SALIDA') => {
-    if (isSubmitting) return; // Prevenir clicks múltiples
+    if (isSubmitting || submittingRef.current) return;
     
     if (!empleadoEncontrado) {
       toast({
@@ -92,6 +93,7 @@ export function RegistroHoras({
       return;
     }
 
+    submittingRef.current = true;
     setIsSubmitting(true);
 
     const objetosTexto = objetosPersonales.length ? objetosPersonales.join(', ') : '';
@@ -107,25 +109,35 @@ export function RegistroHoras({
           title: `${tipo} registrada`,
           description: `${empleadoEncontrado.nombre} - ${new Date().toLocaleTimeString('es-CO')}`,
         });
+        setCedula('');
+        setEmpleadoEncontrado(null);
+        setObjetosPersonales(['NO INGRESA NADA']);
+        setTareas([]);
       }
-      setCedula('');
-      setEmpleadoEncontrado(null);
-      setObjetosPersonales(['NO INGRESA NADA']);
-      setTareas([]);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error al registrar';
+      toast({
+        title: 'Registro duplicado',
+        description: message,
+        variant: 'destructive',
+      });
     } finally {
+      submittingRef.current = false;
       setIsSubmitting(false);
     }
   };
 
   const handleSalidaDirecta = async (empleado: Empleado) => {
-    if (isSubmitting) return; // Prevenir clicks múltiples
+    if (isSubmitting || submittingRef.current) return;
     
+    submittingRef.current = true;
     setIsSubmitting(true);
     const registrosEmpleado = getRegistrosPorEmpleado(empleado.id);
     const ultimo = registrosEmpleado[0];
 
     // Solo permitir SALIDA si el último registro fue ENTRADA
     if (!ultimo || ultimo.tipo !== 'ENTRADA') {
+      submittingRef.current = false;
       setIsSubmitting(false);
       toast({
         title: 'Salida no permitida',
@@ -158,6 +170,7 @@ export function RegistroHoras({
       setObjetosPersonales(['NO INGRESA NADA']);
       setTareas([]);
     } finally {
+      submittingRef.current = false;
       setIsSubmitting(false);
     }
   };
