@@ -53,12 +53,20 @@ export function useAuth() {
     }
   };
 
+  // Pad password to meet 6-char minimum requirement
+  const padPassword = (pwd: string): string => {
+    const upper = pwd.toUpperCase();
+    if (upper.length >= 6) return upper;
+    return (upper + upper).substring(0, 6);
+  };
+
   const login = async (nombreTienda: string, password: string) => {
     const email = `${nombreTienda.toLowerCase().replace(/\s+/g, '_')}@bodega.local`;
+    const paddedPassword = padPassword(password);
     
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password: paddedPassword,
     });
 
     if (error) {
@@ -70,11 +78,12 @@ export function useAuth() {
 
   const register = async (nombreTienda: string, password: string) => {
     const email = `${nombreTienda.toLowerCase().replace(/\s+/g, '_')}@bodega.local`;
+    const paddedPassword = padPassword(password);
     
     // Sign up user
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
-      password,
+      password: paddedPassword,
       options: {
         emailRedirectTo: window.location.origin,
       },
