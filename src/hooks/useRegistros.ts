@@ -42,7 +42,9 @@ export function useRegistros(tiendaId?: string) {
           objetosPersonales: r.objetos_personales || undefined,
           tareas: r.tareas || undefined,
         }));
-        setRegistros(mapped);
+        // Deduplicate by id
+        const unique = mapped.filter((r, i, arr) => arr.findIndex(x => x.id === r.id) === i);
+        setRegistros(unique);
       }
       setLoading(false);
     };
@@ -154,8 +156,12 @@ export function useRegistros(tiendaId?: string) {
       tareas: data.tareas || undefined,
     };
 
-    // Update local state immediately
-    setRegistros(prev => [nuevoRegistro, ...prev]);
+    // Update local state immediately, deduplicating by id
+    setRegistros(prev => {
+      const exists = prev.some(r => r.id === nuevoRegistro.id);
+      if (exists) return prev;
+      return [nuevoRegistro, ...prev];
+    });
     return nuevoRegistro;
   }, [tiendaId]);
 

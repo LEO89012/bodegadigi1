@@ -63,7 +63,9 @@ export function useAdminRegistros(tiendaId?: string) {
         tareas: r.tareas || undefined,
         tiendaNombre: r.tienda_nombre || undefined,
       }));
-      setRegistros(mapped);
+      // Deduplicate by id
+      const unique = mapped.filter((r, i, arr) => arr.findIndex(x => x.id === r.id) === i);
+      setRegistros(unique);
     }
     setLoading(false);
   }, [tiendaId]);
