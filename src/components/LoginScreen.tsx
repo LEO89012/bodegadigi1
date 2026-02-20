@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Building2, Lock, Smartphone } from 'lucide-react';
+import { Building2, Lock, SmartphoneCharging } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ktronixLogo from '@/assets/ktronix-alkosto.png';
 import alkostoLogo from '@/assets/alkosto-logo.png';
@@ -86,23 +86,23 @@ export function LoginScreen({
         <div className="text-center mb-8">
           <div className="flex flex-col items-center gap-4">
             <div className="h-14 w-40 flex items-center justify-center relative">
-              {logos.map((logo, index) => (
-                <img 
-                  key={index}
-                  src={logo} 
-                  alt="Logo" 
-                  style={{
-                    opacity: index === currentLogoIndex ? 1 : 0,
-                    transform: index === currentLogoIndex ? 'scale(1)' : 'scale(0.95)',
-                  }}
-                  className="h-14 w-auto object-contain rounded-xl absolute transition-all duration-700 ease-in-out" 
-                />
-              ))}
+              {logos.map((logo, index) =>
+            <img
+              key={index}
+              src={logo}
+              alt="Logo"
+              style={{
+                opacity: index === currentLogoIndex ? 1 : 0,
+                transform: index === currentLogoIndex ? 'scale(1)' : 'scale(0.95)'
+              }}
+              className="h-14 w-auto object-contain rounded-xl absolute transition-all duration-700 ease-in-out" />
+
+            )}
             </div>
             <div className="flex items-center justify-center gap-3">
-              <Smartphone className="w-7 h-7 text-primary" />
+              <SmartphoneCharging className="w-7 text-primary h-[35px]" />
               <h1 className="text-3xl font-bold text-primary">BODEGA DIGITAL</h1>
-              <Smartphone className="w-7 h-7 text-primary" />
+              <SmartphoneCharging className="w-7 text-primary h-[35px]" />
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@ export function LoginScreen({
                 <Building2 className="w-4 h-4" />
                 Nombre de la Tienda
               </label>
-              <input type="text" value={nombreTienda} onChange={e => setNombreTienda(e.target.value)} placeholder="ALKOSTO PRUEBA" className="kiosk-input" disabled={loading} autoComplete="username" />
+              <input type="text" value={nombreTienda} onChange={(e) => setNombreTienda(e.target.value)} placeholder="ALKOSTO PRUEBA" className="kiosk-input" disabled={loading} autoComplete="username" />
             </div>
 
             <div>
@@ -138,7 +138,7 @@ export function LoginScreen({
                 <Lock className="w-4 h-4" />
                 Contraseña
               </label>
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className="kiosk-input" disabled={loading} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="kiosk-input" disabled={loading} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
             </div>
 
             <button type="submit" disabled={loading} className="kiosk-btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
