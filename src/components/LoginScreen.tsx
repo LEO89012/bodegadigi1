@@ -81,7 +81,7 @@ export function LoginScreen({
       setLoading(false);
     }
   };
-  return <div className="min-h-screen p-4 flex items-center justify-start opacity-100">
+  return <div className="min-h-screen p-4 opacity-100 items-center justify-start flex flex-row px-[5px] py-[5px]">
       <div className="flex items-stretch gap-0 max-w-4xl w-full">
         {/* Video - lado izquierdo, translúcido */}
         <div className="hidden md:flex w-[420px] rounded-l-3xl overflow-hidden relative" style={{ opacity: 0.15 }}>
