@@ -91,7 +91,7 @@ export function LoginScreen({
           loop
           muted
           playsInline
-          className="min-w-full min-h-full object-cover opacity-25" />
+          className="min-w-full min-h-full object-cover opacity-30" />
 
         </div>
 
