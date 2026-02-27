@@ -86,13 +86,13 @@ export function LoginScreen({
         {/* Video - lado izquierdo, translúcido */}
         <div className="hidden md:block w-[420px] rounded-l-3xl overflow-hidden relative" style={{ opacity: 0.15 }}>
           <video
-            src={loginVideo}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover"
-          />
+          src={loginVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover rounded-none opacity-75 px-0 mx-0" />
+
         </div>
 
         {/* Login - lado derecho */}
