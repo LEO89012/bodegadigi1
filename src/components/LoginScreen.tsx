@@ -3,6 +3,7 @@ import { Building2, Lock, SmartphoneCharging } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ktronixLogo from '@/assets/ktronix-alkosto.png';
 import alkostoLogo from '@/assets/alkosto-logo.png';
+import loginVideo from '@/assets/login-video.mp4';
 interface LoginScreenProps {
   onLogin: (nombre: string, password: string) => Promise<unknown>;
   onRegister: (nombre: string, password: string) => Promise<unknown>;
@@ -82,10 +83,24 @@ export function LoginScreen({
   };
   return <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Video */}
+        <div className="flex justify-center mb-4">
+          <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-lg border-2 border-secondary">
+            <video
+              src={loginVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-14 w-40 flex items-center justify-center relative">
+        <div className="text-center mb-6">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-12 w-36 flex items-center justify-center relative">
               {logos.map((logo, index) =>
             <img
               key={index}
@@ -95,8 +110,7 @@ export function LoginScreen({
                 opacity: index === currentLogoIndex ? 1 : 0,
                 transform: index === currentLogoIndex ? 'scale(1)' : 'scale(0.95)'
               }}
-              className="h-14 w-auto object-contain rounded-xl absolute transition-all duration-700 ease-in-out" />
-
+              className="h-12 w-auto object-contain rounded-xl absolute transition-all duration-700 ease-in-out" />
             )}
             </div>
             <div className="flex items-center justify-center gap-3">
